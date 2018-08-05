@@ -34,6 +34,13 @@ class Form {
     return Html::escape(sprintf($format, $value));
   }
 
+  /**
+   * @param string|array $item_path
+   * @param int $decimals
+   * @param string $dec_point
+   * @param string $thousands_sep
+   * @return \Coroq\Html
+   */
   public function number($item_path, $decimals = 0, $dec_point = ".", $thousands_sep = ",") {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
@@ -42,6 +49,11 @@ class Form {
     return Html::escape(number_format($value, $decimals, $dec_point, $thousands_sep));
   }
 
+  /**
+   * @param string|array $item_path
+   * @param string $format
+   * @return \Coroq\Html
+   */
   public function date($item_path, $format) {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
@@ -51,12 +63,12 @@ class Form {
     if ($time === false) {
       throw new \RuntimeException("Invaild date time string '$value'");
     }
-    return Html::escape(date($time, $format));
+    return Html::escape(date($format, $time));
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
+   * @return \Coroq\Html|array<\Coroq\Html>
    */
   public function selected($item_path) {
     $item = $this->getItemIn($item_path);
@@ -82,36 +94,70 @@ class Form {
       ->attr("value", $item->getValue());
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputText($item_path) {
     return $this->input($item_path, "text");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputEmail($item_path) {
     return $this->input($item_path, "email");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputDate($item_path) {
-    $html = $this->input($item_path, "date");
+    return $this->input($item_path, "date");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputHidden($item_path) {
     return $this->input($item_path, "hidden");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputPassword($item_path) {
     return $this->input($item_path, "password");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputFile($item_path) {
     return $this->input($item_path, "file");
   }
 
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function textarea($item_path) {
-    return Html::escape($this->getItemIn($item_path)->getValue())
+    return (new Html())
       ->tag("textarea")
-      ->attr("name", $this->makeName($item_path));
+      ->attr("name", $this->makeName($item_path))
+      ->append($this->getItemIn($item_path)->getValue());
   }
 
+  /**
+   * @param string|array $item_path
+   * @param string $value
+   * @return \Coroq\Html
+   */
   public function inputCheckbox($item_path, $value) {
     return $this->inputCheckable($item_path, "checkbox", $value);
   }
@@ -149,7 +195,7 @@ class Form {
   }
 
   public function select($item_path) {
-    $h = new Html()
+    $h = (new Html())
       ->tag("select")
       ->children($this->options($item_path));
     if (is_array($this->getItemIn($item_path)->getValue())) {
@@ -171,13 +217,14 @@ class Form {
       if (in_array("$value", $selected)) {
         $attrs["selected"] = true;
       }
-      $options[] = Html::escape($label)->attrs($attrs);
+      $options[] = (new Html())->attrs($attrs)->append($label);
     }
     return $options;
   }
 
   public function makeName($item_path) {
-    $item_path = explode($this->options["path_separator"], $item_path);
+    $options = $this->form->getOptions();
+    $item_path = explode($options["path_separator"], $item_path);
     $name = array_shift($item_path);
     foreach ($item_path as $node) {
       $name .= "[$node]";

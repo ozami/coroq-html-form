@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ozami/coroq-form.git",
-                "reference": "a7a085b28b50ff134df42584d6a935be82009c27"
+                "reference": "30c694ba07ae6c613098e797b1f309582fa229fc"
             },
             "require": {
                 "lib-pcre": "*",
@@ -41,7 +41,7 @@
                     "email": "ozawa@coroq.com"
                 }
             ],
-            "time": "2018-08-04T11:47:34+00:00"
+            "time": "2018-08-05T10:25:20+00:00"
         },
         {
             "name": "coroq/html",
@@ -49,7 +49,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ozami/coroq-html.git",
-                "reference": "a18c579dfbaecc9e62e1e1726805199d1a969d83"
+                "reference": "991e246487f9e4523a7f244cb33600a850683750"
             },
             "require": {
                 "lib-pcre": "*",
@@ -78,7 +78,7 @@
                     "email": "ozawa@coroq.com"
                 }
             ],
-            "time": "2018-08-03T09:11:46+00:00"
+            "time": "2018-08-05T03:46:05+00:00"
         }
     ],
     "packages-dev": [
