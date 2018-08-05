@@ -177,11 +177,12 @@ class Form {
   public function inputCheckable($item_path, $type, $value) {
     $h = $this->input($item_path, $type);
     $item = $this->getItemIn($item_path);
-    $value = $item->getValue();
-    if (is_array($value)) {
+    $selected = $item->getValue();
+    if (is_array($selected)) {
       $h->attr("name", $this->makeName($item_path) . "[]");
     }
-    if (in_array("$value", (array)$value)) {
+    $h->attr("value", $value);
+    if (in_array("$value", (array)$selected)) {
       $h->attr("checked", true);
     }
     return $h;
