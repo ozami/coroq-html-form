@@ -218,7 +218,10 @@ class Form {
       if (in_array("$value", $selected)) {
         $attrs["selected"] = true;
       }
-      $options[] = (new Html())->attrs($attrs)->append($label);
+      $options[] = (new Html())
+        ->tag("option")
+        ->attrs($attrs)
+        ->append($label);
     }
     return $options;
   }
