@@ -16,6 +16,31 @@ class FormTest extends PHPUnit_Framework_TestCase {
     );
   }
   
+  public function testInputText() {
+    $form = new HtmlForm(new Form());
+    $input = (new Input())
+      ->setValue("X");
+    $form->setItem("x", $input);
+    $h = (new Html())
+      ->tag("input")
+      ->attr("type", "text")
+      ->attr("name", "x")
+      ->attr("value", "X");
+    $this->assertEquals($h, $form->inputText("x"));
+  }
+
+  public function testTextarea() {
+    $form = new HtmlForm(new Form());
+    $input = (new Input())
+      ->setValue("X\nY\nZ");
+    $form->setItem("x", $input);
+    $h = (new Html())
+      ->tag("textarea")
+      ->attr("name", "x")
+      ->append("X\nY\nZ");
+    $this->assertEquals($h, $form->textarea("x"));
+  }
+
   public function testInputCheckboxes() {
     $form = new HtmlForm(new Form());
     $input = (new Select())
