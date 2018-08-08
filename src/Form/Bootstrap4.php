@@ -17,17 +17,19 @@ class Bootstrap4 extends \Coroq\Html\Form {
     else {
       $h->addClass("form-control");
     }
-    return $h;
+    return $this->addValidationClass($h, $item_path);
   }
   
   public function textarea($item_path) {
     $h = parent::textarea($item_path);
-    return $h->addClass("form-control");
+    $h->addClass("form-control");
+    return $this->addValidationClass($h, $item_path);
   }
 
   public function select($item_path) {
     $h = parent::select($item_path);
-    return $h->addClass("form-control");
+    $h->addClass("form-control");
+    return $this->addValidationClass($h, $item_path);
   }
 
   public function error($item_paths) {
@@ -47,5 +49,12 @@ class Bootstrap4 extends \Coroq\Html\Form {
         ->addClass("invalid-feedback");
     }, $errors);
     return (new Html())->children($errors);
+  }
+
+  protected function addValidationClass($h, $item_path) {
+    if ($this->form->getItemIn($item_path)->getError()) {
+      $h->addClass("is-invalid");
+    }
+    return $h;
   }
 }
