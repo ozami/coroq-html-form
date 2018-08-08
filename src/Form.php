@@ -190,9 +190,13 @@ class Form {
 
   public function inputCheckables($item_path, $type) {
     $fn = [$this, "input$type"];
-    return array_map(function($value) use ($item_path, $fn) {
-      return call_user_func($fn, $item_path, $value);
-    }, array_keys($this->getItemIn($item_path)->getOptions()));
+    $inputs = [];
+    foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
+      $input = call_user_func($fn, $item_path, $value);
+      $input->attr("title", $label);
+      $inputs[$value] = $input;
+    }
+    return $inputs;
   }
 
   public function select($item_path) {
