@@ -32,7 +32,7 @@ class Bootstrap4 extends \Coroq\Html\Form {
 
   public function error($item_paths) {
     $errors = [];
-    foreach ($item_paths as $item_path) {
+    foreach ((array)$item_paths as $item_path) {
       $item = $this->getItemIn($item_path);
       $error = $item->getError();
       if ($error) {
