@@ -182,7 +182,7 @@ class Form {
       $h->attr("name", $this->makeName($item_path) . "[]");
     }
     $h->attr("value", $value);
-    if (in_array("$value", (array)$selected)) {
+    if (in_array("$value", (array)$selected, true)) {
       $h->attr("checked", true);
     }
     return $h;
