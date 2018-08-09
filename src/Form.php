@@ -114,6 +114,14 @@ class Form {
    * @param string|array $item_path
    * @return \Coroq\Html
    */
+  public function inputTel($item_path) {
+    return $this->input($item_path, "tel");
+  }
+
+  /**
+   * @param string|array $item_path
+   * @return \Coroq\Html
+   */
   public function inputDate($item_path) {
     return $this->input($item_path, "date");
   }
