@@ -91,7 +91,8 @@ class Form {
       ->tag("input")
       ->attr("type", $type)
       ->attr("name", $this->makeName($item_path))
-      ->attr("value", $item->getValue());
+      ->attr("value", $item->getValue())
+      ->attrs($this->getGeneralAttributesFromInput($item));
   }
 
   /**
@@ -155,10 +156,12 @@ class Form {
    * @return \Coroq\Html
    */
   public function textarea($item_path) {
+    $item = $this->getItemIn($item_path);
     return (new Html())
       ->tag("textarea")
       ->attr("name", $this->makeName($item_path))
-      ->append($this->getItemIn($item_path)->getValue());
+      ->attrs($this->getGeneralAttributesFromInput($item))
+      ->append($item->getValue());
   }
 
   /**
@@ -202,16 +205,21 @@ class Form {
     foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
       $input = call_user_func($fn, $item_path, $value);
       $input->attr("title", $label);
+      if ($type == "checkbox") {
+        $input->attr("required", false);
+      }
       $inputs[$value] = $input;
     }
     return $inputs;
   }
 
   public function select($item_path) {
+    $item = $this->getItemIn($item_path);
     $h = (new Html())
       ->tag("select")
+      ->attrs($this->getGeneralAttributesFromInput($item))
       ->children($this->options($item_path));
-    if (is_array($this->getItemIn($item_path)->getValue())) {
+    if (is_array($item->getValue())) {
       $h->attr("name", $this->makeName($item_path) . "[]");
       $h->attr("multiple", true);
     }
@@ -246,6 +254,38 @@ class Form {
       $name .= "[$node]";
     }
     return $name;
+  }
+
+  protected function getGeneralAttributesFromInput($input) {
+    $attrs = [];
+    if ($input->isRequired()) {
+      $attrs["required"] = true;
+    }
+    if ($input->isReadOnly()) {
+      $attrs["readonly"] = true;
+    }
+    if ($input->isDisabled()) {
+      $attrs["disabled"] = true;
+    }
+    if (method_exists($input, "getMaxLength")) {
+      $max_length = $input->getMaxLength();
+      if ($max_length < PHP_INT_MAX) {
+        $attrs["maxlength"] = $max_length;
+      }
+    }
+    if (method_exists($input, "getMinLength")) {
+      $min_length = $input->getMinLength();
+      if ($min_length > 0) {
+        $attrs["minlength"] = $min_length;
+      }
+    }
+    if (method_exists($input, "getMax")) {
+      $attrs["max"] = $input->getMax();
+    }
+    if (method_exists($input, "getMin")) {
+      $attrs["min"] = $input->getMin();
+    }
+    return $attrs;
   }
 
   public function __call($name, $args) {

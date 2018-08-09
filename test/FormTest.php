@@ -25,7 +25,8 @@ class FormTest extends PHPUnit_Framework_TestCase {
       ->tag("input")
       ->attr("type", "text")
       ->attr("name", "x")
-      ->attr("value", "X");
+      ->attr("value", "X")
+      ->attr("required", true);
     $this->assertEquals($h, $form->inputText("x"));
   }
 
@@ -37,50 +38,61 @@ class FormTest extends PHPUnit_Framework_TestCase {
     $h = (new Html())
       ->tag("textarea")
       ->attr("name", "x")
+      ->attr("required", true)
       ->append("X\nY\nZ");
     $this->assertEquals($h, $form->textarea("x"));
   }
 
   public function testInputCheckboxes() {
     $form = new HtmlForm(new Form());
+    $options = ["a" => "A", "b" => "B", "c" => "C"];
     $input = (new Select())
-      ->setOptions(["a" => "A", "b" => "B", "c" => "C"])
+      ->setOptions($options)
       ->setValue("b");
     $form->setItem("x", $input);
+    $expected = [];
+    foreach ($options as $value => $label) {
+      $h = (new Html())
+        ->tag("input")
+        ->attr("type", "checkbox")
+        ->attr("name", "x")
+        ->attr("value", $value)
+        ->attr("required", false)
+        ->attr("title", $label);
+      if ($value == "b") {
+        $h->attr("checked", true);
+      }
+      $expected[$value] = $h;
+    }
     $this->assertEquals(
-      array_map(function($value) {
-        $h = (new Html())
-          ->tag("input")
-          ->attr("type", "checkbox")
-          ->attr("name", "x")
-          ->attr("value", $value);
-        if ($value == "b") {
-          $h->attr("checked", true);
-        }
-        return $h;
-      }, ["a", "b", "c"]),
+      $expected,
       $form->inputCheckboxes("x")
     );
   }
 
   public function testInputCheckboxesForMultiSelect() {
     $form = new HtmlForm(new Form());
+    $options = ["a" => "A", "b" => "B", "c" => "C"];
     $input = (new MultiSelect())
-      ->setOptions(["a" => "A", "b" => "B", "c" => "C"])
+      ->setOptions($options)
       ->setValue(["a", "b"]);
     $form->setItem("x", $input);
+    $expected = [];
+    foreach ($options as $value => $label) {
+      $h = (new Html())
+        ->tag("input")
+        ->attr("type", "checkbox")
+        ->attr("name", "x[]")
+        ->attr("value", $value)
+        ->attr("required", false)
+        ->attr("title", $label);
+      if ($value == "a" || $value == "b") {
+        $h->attr("checked", true);
+      }
+      $expected[$value] = $h;
+    }
     $this->assertEquals(
-      array_map(function($value) {
-        $h = (new Html())
-          ->tag("input")
-          ->attr("type", "checkbox")
-          ->attr("name", "x[]")
-          ->attr("value", $value);
-        if ($value == "a" || $value == "b") {
-          $h->attr("checked", true);
-        }
-        return $h;
-      }, ["a", "b", "c"]),
+      $expected,
       $form->inputCheckboxes("x")
     );
   }
@@ -94,6 +106,7 @@ class FormTest extends PHPUnit_Framework_TestCase {
     $h = (new Html())
       ->tag("select")
       ->attr("name", "x")
+      ->attr("required", true)
       ->children(array_map(function($value) {
         $h = (new Html())
           ->tag("option")
