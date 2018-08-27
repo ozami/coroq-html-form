@@ -11,8 +11,8 @@
     "require": {
         "php": ">=5.4",
         "lib-pcre": "*",
-        "coroq/html": "dev-master",
-        "coroq/form": "dev-master"
+        "coroq/html": "0.1.x",
+        "coroq/form": "0.1.x"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.8"
