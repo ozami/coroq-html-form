@@ -1,6 +1,6 @@
 <?php
 namespace Coroq\Html\Form;
-use \Coroq\Html;
+use Coroq\Html;
 
 class Bootstrap4 extends \Coroq\Html\Form {
   public function input($item_path, $type) {

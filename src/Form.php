@@ -1,6 +1,6 @@
 <?php
 namespace Coroq\Html;
-use \Coroq\Html;
+use Coroq\Html;
 
 class Form {
   /** @var \Coroq\Form $form */
