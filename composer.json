@@ -20,11 +20,11 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/ozami/html.git"
+            "url": "https://github.com/ozami/coroq-html.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/ozami/form.git"
+            "url": "https://github.com/ozami/coroq-form.git"
         }
     ],
     "autoload": {
