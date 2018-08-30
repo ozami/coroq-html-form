@@ -4,14 +4,14 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2311698592a6d9b03a67fca1d56ec7b",
+    "content-hash": "cfd331b3d5f8d2d1b0fceaea0e9e1db5",
     "packages": [
         {
             "name": "coroq/form",
             "version": "0.1.0",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ozami/coroq-form.git",
+                "url": "https://github.com/ozami/coroq-form.git",
                 "reference": "ab8cd9d09925951fad5dd9f47d0a8bdbc74d3755"
             },
             "require": {
@@ -48,7 +48,7 @@
             "version": "0.1.0",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ozami/coroq-html.git",
+                "url": "https://github.com/ozami/coroq-html.git",
                 "reference": "991e246487f9e4523a7f244cb33600a850683750"
             },
             "require": {
@@ -1056,7 +1056,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.44",
+            "version": "v2.8.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
