@@ -33,7 +33,7 @@ class Bootstrap4 extends \Coroq\Html\Form {
   }
 
   public function error($item_paths) {
-    return parent::error($item_paths)->tag("p")->addClass("invalid-feedback");
+    return parent::error($item_paths)->tag("div")->addClass("invalid-feedback");
   }
 
   protected function addValidationClass($h, $item_path) {
