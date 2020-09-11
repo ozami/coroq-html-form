@@ -246,6 +246,24 @@ class Form {
     return $options;
   }
 
+  public function error($item_paths) {
+    $errors = [];
+    foreach ((array)$item_paths as $item_path) {
+      $item = $this->getItemIn($item_path);
+      $error = $item->getError();
+      if ($error) {
+        $errors[] = "$error";
+      }
+    }
+    $errors = array_unique($errors);
+    $errors = array_map(function($error) {
+      return (new Html())
+        ->append($error)
+        ->tag("div");
+    }, $errors);
+    return (new Html())->children($errors);
+  }
+
   public function makeName($item_path) {
     $options = $this->form->getOptions();
     $item_path = explode($options["path_separator"], $item_path);
