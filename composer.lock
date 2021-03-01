@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "402b5347fdbea809442c6fb9cd3f05c1",
+    "content-hash": "02c86357e20e2e46a8671c2c72cbb22d",
     "packages": [
         {
             "name": "coroq/form",
-            "version": "0.2.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-form.git",
-                "reference": "89cb4f427631ce8a2b2cc845d4dab5ac178f7fef"
+                "reference": "43d254dda12aaab657f95b9d22cf0fa57d7e5216"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/89cb4f427631ce8a2b2cc845d4dab5ac178f7fef",
-                "reference": "89cb4f427631ce8a2b2cc845d4dab5ac178f7fef",
+                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/43d254dda12aaab657f95b9d22cf0fa57d7e5216",
+                "reference": "43d254dda12aaab657f95b9d22cf0fa57d7e5216",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,11 @@
                     "email": "ozawa@coroq.com"
                 }
             ],
-            "time": "2020-04-02T02:37:24+00:00"
+            "support": {
+                "issues": "https://github.com/ozami/coroq-form/issues",
+                "source": "https://github.com/ozami/coroq-form/tree/1.0.0"
+            },
+            "time": "2021-03-01T07:05:05+00:00"
         },
         {
             "name": "coroq/html",
@@ -1128,5 +1132,6 @@
         "php": ">=5.4",
         "lib-pcre": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

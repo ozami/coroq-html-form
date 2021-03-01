@@ -250,9 +250,9 @@ class Form {
     $errors = [];
     foreach ((array)$item_paths as $item_path) {
       $item = $this->getItemIn($item_path);
-      $error = $item->getError();
+      $error = $item->getErrorString();
       if ($error) {
-        $errors[] = "$error";
+        $errors[] = $error;
       }
     }
     $errors = array_unique($errors);
