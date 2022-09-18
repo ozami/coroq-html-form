@@ -18,7 +18,7 @@ class Form {
    * @return \Coroq\Html
    */
   public function value($item_path) {
-    return Html::escape($this->getItemIn($item_path)->getValue());
+    return (new Html())->append($this->getItemIn($item_path)->getValue());
   }
 
   /**
@@ -29,9 +29,9 @@ class Form {
   public function format($item_path, $format) {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
-      return Html::escape("");
+      return new Html();
     }
-    return Html::escape(sprintf($format, $value));
+    return (new Html())->append(sprintf($format, $value));
   }
 
   /**
@@ -44,9 +44,9 @@ class Form {
   public function number($item_path, $decimals = 0, $dec_point = ".", $thousands_sep = ",") {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
-      return Html::escape("");
+      return new Html();
     }
-    return Html::escape(number_format($value, $decimals, $dec_point, $thousands_sep));
+    return (new Html())->append(number_format($value, $decimals, $dec_point, $thousands_sep));
   }
 
   /**
@@ -57,13 +57,13 @@ class Form {
   public function date($item_path, $format) {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
-      return Html::escape("");
+      return new Html();
     }
     $time = strtotime($value);
     if ($time === false) {
       throw new \RuntimeException("Invaild date time string '$value'");
     }
-    return Html::escape(date($format, $time));
+    return (new Html())->append(date($format, $time));
   }
 
   /**
@@ -74,10 +74,10 @@ class Form {
     $item = $this->getItemIn($item_path);
     if (is_array($item->getValue())) {
       return array_map(function($label) {
-        return Html::escape($label);
+        return (new Html())->append($label);
       }, $item->getSelectedLabel());
     }
-    return Html::escape($item->getSelectedLabel());
+    return (new Html())->append($item->getSelectedLabel());
   }
 
   /**
