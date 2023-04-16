@@ -1,21 +1,23 @@
 <?php
-namespace Coroq\Html;
-use Coroq\Html;
+namespace Coroq\HtmlForm;
 
-class Form {
-  /** @var \Coroq\Form $form */
+use Coroq\Form\Form;
+use Coroq\Html\Html;
+
+class HtmlForm {
+  /** @var Form */
   protected $form;
 
   /**
-   * @param \Coroq\Form $form
+   * @param Form $form
    */
-  public function __construct(\Coroq\Form $form) {
+  public function __construct(Form $form) {
     $this->form = $form;
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
+   * @return Html
    */
   public function value($item_path) {
     return (new Html())->append($this->getItemIn($item_path)->getValue());
@@ -24,9 +26,8 @@ class Form {
   /**
    * @param string|array $item_path
    * @param string $format
-   * @return \Coroq\Html
    */
-  public function format($item_path, $format) {
+  public function format($item_path, $format): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -39,9 +40,9 @@ class Form {
    * @param int $decimals
    * @param string $dec_point
    * @param string $thousands_sep
-   * @return \Coroq\Html
+   * @return Html
    */
-  public function number($item_path, $decimals = 0, $dec_point = ".", $thousands_sep = ",") {
+  public function number($item_path, $decimals = 0, $dec_point = ".", $thousands_sep = ","): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -52,9 +53,8 @@ class Form {
   /**
    * @param string|array $item_path
    * @param string $format
-   * @return \Coroq\Html
    */
-  public function date($item_path, $format) {
+  public function date($item_path, $format): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -68,7 +68,7 @@ class Form {
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html|array<\Coroq\Html>
+   * @return Html|array<Html>
    */
   public function selected($item_path) {
     $item = $this->getItemIn($item_path);
@@ -83,9 +83,8 @@ class Form {
   /**
    * @param string|array $item_path
    * @param string $type
-   * @return \Coroq\Html
    */
-  public function input($item_path, $type) {
+  public function input($item_path, $type): Html {
     $item = $this->getItemIn($item_path);
     return (new Html())
       ->tag("input")
@@ -97,65 +96,57 @@ class Form {
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputText($item_path) {
+  public function inputText($item_path): Html {
     return $this->input($item_path, "text");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputEmail($item_path) {
+  public function inputEmail($item_path): Html {
     return $this->input($item_path, "email");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputTel($item_path) {
+  public function inputTel($item_path): Html {
     return $this->input($item_path, "tel");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputDate($item_path) {
+  public function inputDate($item_path): Html {
     return $this->input($item_path, "date");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputHidden($item_path) {
+  public function inputHidden($item_path): Html {
     return $this->input($item_path, "hidden");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputPassword($item_path) {
+  public function inputPassword($item_path): Html {
     return $this->input($item_path, "password");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function inputFile($item_path) {
+  public function inputFile($item_path): Html {
     return $this->input($item_path, "file");
   }
 
   /**
    * @param string|array $item_path
-   * @return \Coroq\Html
    */
-  public function textarea($item_path) {
+  public function textarea($item_path): Html {
     $item = $this->getItemIn($item_path);
     return (new Html())
       ->tag("textarea")
@@ -167,25 +158,24 @@ class Form {
   /**
    * @param string|array $item_path
    * @param string $value
-   * @return \Coroq\Html
    */
-  public function inputCheckbox($item_path, $value) {
+  public function inputCheckbox($item_path, $value): Html {
     return $this->inputCheckable($item_path, "checkbox", $value);
   }
 
-  public function inputCheckboxes($item_path) {
+  public function inputCheckboxes($item_path): array {
     return $this->inputCheckables($item_path, "checkbox");
   }
 
-  public function inputRadio($item_path, $value) {
+  public function inputRadio($item_path, $value): Html {
     return $this->inputCheckable($item_path, "radio", $value);
   }
 
-  public function inputRadios($item_path) {
+  public function inputRadios($item_path): array {
     return $this->inputCheckables($item_path, "radio");
   }
 
-  public function inputCheckable($item_path, $type, $value) {
+  public function inputCheckable($item_path, $type, $value): Html {
     $h = $this->input($item_path, $type);
     $item = $this->getItemIn($item_path);
     $selected = $item->getValue();
@@ -199,7 +189,7 @@ class Form {
     return $h;
   }
 
-  public function inputCheckables($item_path, $type) {
+  public function inputCheckables($item_path, $type): array {
     $fn = [$this, "input$type"];
     $inputs = [];
     foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
@@ -213,7 +203,7 @@ class Form {
     return $inputs;
   }
 
-  public function select($item_path) {
+  public function select($item_path): Html {
     $item = $this->getItemIn($item_path);
     $h = (new Html())
       ->tag("select")
@@ -229,7 +219,7 @@ class Form {
     return $h;
   }
 
-  public function options($item_path) {
+  public function options($item_path): array {
     $item = $this->getItemIn($item_path);
     $selected = (array)$item->getValue();
     $options = [];
@@ -246,7 +236,7 @@ class Form {
     return $options;
   }
 
-  public function error($item_paths) {
+  public function error($item_paths): Html {
     $errors = [];
     foreach ((array)$item_paths as $item_path) {
       $item = $this->getItemIn($item_path);
@@ -264,7 +254,7 @@ class Form {
     return (new Html())->children($errors);
   }
 
-  public function makeName($item_path) {
+  public function makeName($item_path): string {
     $options = $this->form->getOptions();
     $item_path = explode($options["path_separator"], $item_path);
     $name = array_shift($item_path);
@@ -274,7 +264,7 @@ class Form {
     return $name;
   }
 
-  protected function getGeneralAttributesFromInput($input) {
+  protected function getGeneralAttributesFromInput($input): array {
     $attrs = [];
     if ($input->isRequired()) {
       $attrs["required"] = true;

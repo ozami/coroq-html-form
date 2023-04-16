@@ -1,12 +1,13 @@
 <?php
-use Coroq\Html\Form as HtmlForm;
-use Coroq\Html;
-use Coroq\Form;
-use Coroq\Input;
-use Coroq\Input\Select;
-use Coroq\Input\MultiSelect;
-  
-class FormTest extends PHPUnit_Framework_TestCase {
+use Coroq\Html\Html;
+use Coroq\HtmlForm\HtmlForm;
+use Coroq\Form\Form;
+use Coroq\Form\Input;
+use Coroq\Form\Input\Select;
+use Coroq\Form\Input\MultiSelect;
+use PHPUnit\Framework\TestCase;
+
+class FormTest extends TestCase {
   public function testValue() {
     $form = new HtmlForm(new Form());
     $form->setItem("a", (new Input())->setValue("A"));
