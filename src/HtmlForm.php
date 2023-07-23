@@ -104,6 +104,13 @@ class HtmlForm {
   /**
    * @param string|array $item_path
    */
+  public function inputNumber($item_path): Html {
+    return $this->input($item_path, "number");
+  }
+
+  /**
+   * @param string|array $item_path
+   */
   public function inputEmail($item_path): Html {
     return $this->input($item_path, "email");
   }
