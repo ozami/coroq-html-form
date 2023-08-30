@@ -9,8 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 class FormTest extends TestCase {
   public function testValue() {
-    $form = new HtmlForm(new Form());
-    $form->setItem("a", (new Input())->setValue("A"));
+    $form = new Form();
+    $form->a = (new Input())->setValue("A");
+    $form = new HtmlForm($form);
     $this->assertEquals(
       Html::escape("A"),
       $form->value("a")
@@ -18,10 +19,10 @@ class FormTest extends TestCase {
   }
   
   public function testInputText() {
-    $form = new HtmlForm(new Form());
-    $input = (new Input())
+    $form = new Form();
+    $form->x = (new Input())
       ->setValue("X");
-    $form->setItem("x", $input);
+    $form = new HtmlForm($form);
     $h = (new Html())
       ->tag("input")
       ->attr("type", "text")
@@ -32,10 +33,10 @@ class FormTest extends TestCase {
   }
 
   public function testTextarea() {
-    $form = new HtmlForm(new Form());
-    $input = (new Input())
+    $form = new Form();
+    $form->x = (new Input())
       ->setValue("X\nY\nZ");
-    $form->setItem("x", $input);
+    $form = new HtmlForm($form);
     $h = (new Html())
       ->tag("textarea")
       ->attr("name", "x")
@@ -45,12 +46,12 @@ class FormTest extends TestCase {
   }
 
   public function testInputCheckboxes() {
-    $form = new HtmlForm(new Form());
+    $form = new Form();
     $options = ["a" => "A", "b" => "B", "c" => "C"];
-    $input = (new Select())
+    $form->x = (new Select())
       ->setOptions($options)
       ->setValue("b");
-    $form->setItem("x", $input);
+    $form = new HtmlForm($form);
     $expected = [];
     foreach ($options as $value => $label) {
       $h = (new Html())
@@ -72,12 +73,12 @@ class FormTest extends TestCase {
   }
 
   public function testInputCheckboxesForMultiSelect() {
-    $form = new HtmlForm(new Form());
+    $form = new Form();
     $options = ["a" => "A", "b" => "B", "c" => "C"];
-    $input = (new MultiSelect())
+    $form->x = (new MultiSelect())
       ->setOptions($options)
       ->setValue(["a", "b"]);
-    $form->setItem("x", $input);
+    $form = new HtmlForm($form);
     $expected = [];
     foreach ($options as $value => $label) {
       $h = (new Html())
@@ -99,11 +100,11 @@ class FormTest extends TestCase {
   }
   
   public function testSelect() {
-    $form = new HtmlForm(new Form());
-    $input = (new Select())
+    $form = new Form();
+    $form->x = (new Select())
       ->setOptions(["a" => "A", "b" => "B", "c" => "C"])
       ->setValue("b");
-    $form->setItem("x", $input);
+    $form = new HtmlForm($form);
     $h = (new Html())
       ->tag("select")
       ->attr("name", "x")

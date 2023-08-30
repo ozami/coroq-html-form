@@ -39,7 +39,7 @@ class Bootstrap4 extends HtmlForm {
   }
 
   protected function addValidationClass($h, $item_path): Html {
-    if ($this->form->getItemIn($item_path)->getError()) {
+    if ($this->getForm()->getItemIn($item_path)->getError()) {
       $h->addClass("is-invalid");
     }
     return $h;

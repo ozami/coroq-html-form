@@ -6,7 +6,7 @@ use Coroq\Html\Html;
 
 class HtmlForm {
   /** @var Form */
-  protected $form;
+  private $form;
 
   /**
    * @param Form $form
@@ -15,12 +15,16 @@ class HtmlForm {
     $this->form = $form;
   }
 
+  public function getForm(): Form {
+    return $this->form;
+  }
+
   /**
    * @param string|array $item_path
    * @return Html
    */
   public function value($item_path) {
-    return (new Html())->append($this->getItemIn($item_path)->getValue());
+    return (new Html())->append($this->form->getItemIn($item_path)->getValue());
   }
 
   /**
@@ -28,7 +32,7 @@ class HtmlForm {
    * @param string $format
    */
   public function format($item_path, $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->form->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
     }
@@ -43,7 +47,7 @@ class HtmlForm {
    * @return Html
    */
   public function number($item_path, $decimals = 0, $dec_point = ".", $thousands_sep = ","): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->form->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
     }
@@ -55,7 +59,7 @@ class HtmlForm {
    * @param string $format
    */
   public function date($item_path, $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->form->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
     }
@@ -71,7 +75,7 @@ class HtmlForm {
    * @return Html|array<Html>
    */
   public function selected($item_path) {
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     if (is_array($item->getValue())) {
       return array_map(function($label) {
         return (new Html())->append($label);
@@ -85,7 +89,7 @@ class HtmlForm {
    * @param string $type
    */
   public function input($item_path, $type): Html {
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     return (new Html())
       ->tag("input")
       ->attr("type", $type)
@@ -154,7 +158,7 @@ class HtmlForm {
    * @param string|array $item_path
    */
   public function textarea($item_path): Html {
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     return (new Html())
       ->tag("textarea")
       ->attr("name", $this->makeName($item_path))
@@ -184,7 +188,7 @@ class HtmlForm {
 
   public function inputCheckable($item_path, $type, $value): Html {
     $h = $this->input($item_path, $type);
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     $selected = $item->getValue();
     if (is_array($selected)) {
       $h->attr("name", $this->makeName($item_path) . "[]");
@@ -199,7 +203,7 @@ class HtmlForm {
   public function inputCheckables($item_path, $type): array {
     $fn = [$this, "input$type"];
     $inputs = [];
-    foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
+    foreach ($this->form->getItemIn($item_path)->getOptions() as $value => $label) {
       $input = call_user_func($fn, $item_path, $value);
       $input->attr("title", $label);
       if ($type == "checkbox") {
@@ -211,7 +215,7 @@ class HtmlForm {
   }
 
   public function select($item_path): Html {
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     $h = (new Html())
       ->tag("select")
       ->attrs($this->getGeneralAttributesFromInput($item))
@@ -227,7 +231,7 @@ class HtmlForm {
   }
 
   public function options($item_path): array {
-    $item = $this->getItemIn($item_path);
+    $item = $this->form->getItemIn($item_path);
     $selected = (array)$item->getValue();
     $options = [];
     foreach ($item->getOptions() as $value => $label) {
@@ -246,7 +250,7 @@ class HtmlForm {
   public function error($item_paths): Html {
     $errors = [];
     foreach ((array)$item_paths as $item_path) {
-      $item = $this->getItemIn($item_path);
+      $item = $this->form->getItemIn($item_path);
       $error = $item->getErrorString();
       if ($error) {
         $errors[] = $error;
@@ -262,8 +266,7 @@ class HtmlForm {
   }
 
   public function makeName($item_path): string {
-    $options = $this->form->getOptions();
-    $item_path = explode($options["path_separator"], $item_path);
+    $item_path = explode("/", $item_path);
     $name = array_shift($item_path);
     foreach ($item_path as $node) {
       $name .= "[$node]";
@@ -301,9 +304,5 @@ class HtmlForm {
       $attrs["min"] = $input->getMin();
     }
     return $attrs;
-  }
-
-  public function __call($name, $args) {
-    return call_user_func_array([$this->form, $name], $args);
   }
 }
