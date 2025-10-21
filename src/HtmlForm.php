@@ -182,6 +182,13 @@ class HtmlForm {
   /**
    * @param string|array<string> $item_path
    */
+  public function inputUrl(string|array $item_path): Html {
+    return $this->input($item_path, "url");
+  }
+
+  /**
+   * @param string|array<string> $item_path
+   */
   public function textarea(string|array $item_path): Html {
     $item = $this->getItemIn($item_path);
     return (new Html())
@@ -196,6 +203,20 @@ class HtmlForm {
    */
   public function inputCheckbox(string|array $item_path, string $value): Html {
     return $this->inputCheckable($item_path, "checkbox", $value);
+  }
+
+  /**
+   * Boolean checkbox - for BooleanInput (single checkbox without value)
+   * @param string|array<string> $item_path
+   */
+  public function inputBoolean(string|array $item_path, string $value = "1"): Html {
+    $item = $this->getItemIn($item_path);
+    $h = $this->input($item_path, "checkbox");
+    $h->attr("value", $value);
+    if ($item->getValue()) {
+      $h->attr("checked", true);
+    }
+    return $h;
   }
 
   /**

@@ -336,4 +336,46 @@ class FormTest extends TestCase {
 
     $this->assertEquals("user[address][city]", $htmlForm->makeName(["user", "address", "city"]));
   }
+
+  // New FormItem types in 3.0.0-alpha2
+  public function testInputUrl(): void {
+    $form = new Form();
+    $form->website = (new FormItem\UrlInput())->setValue("https://example.com");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputUrl("website");
+
+    $this->assertEquals("url", $input->getAttr("type"));
+    $this->assertEquals("https://example.com", $input->getAttr("value"));
+  }
+
+  public function testInputBoolean(): void {
+    $form = new Form();
+    $form->agree = (new FormItem\BooleanInput())->setValue("1");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputBoolean("agree");
+
+    $this->assertEquals("checkbox", $input->getAttr("type"));
+    $this->assertEquals("1", $input->getAttr("value"));
+    $this->assertTrue($input->getAttr("checked"));
+  }
+
+  public function testInputBooleanUnchecked(): void {
+    $form = new Form();
+    $form->agree = (new FormItem\BooleanInput())->setValue("");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputBoolean("agree");
+
+    $this->assertEquals("checkbox", $input->getAttr("type"));
+    $this->assertNull($input->getAttr("checked"));
+  }
+
+  public function testInputBooleanWithCustomValue(): void {
+    $form = new Form();
+    $form->agree = (new FormItem\BooleanInput())->setValue("yes");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputBoolean("agree", "yes");
+
+    $this->assertEquals("yes", $input->getAttr("value"));
+    $this->assertTrue($input->getAttr("checked"));
+  }
 }
