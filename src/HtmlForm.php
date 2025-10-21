@@ -78,7 +78,7 @@ class HtmlForm {
     if ($value == "") {
       return new Html();
     }
-    return (new Html())->append(number_format($value, $decimals, $dec_point, $thousands_sep));
+    return (new Html())->append(number_format((float)$value, $decimals, $dec_point, $thousands_sep));
   }
 
   /**
