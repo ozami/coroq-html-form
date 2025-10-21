@@ -1,57 +1,66 @@
 <?php
+declare(strict_types=1);
+
 use Coroq\Html\Html;
 use Coroq\HtmlForm\HtmlForm;
 use Coroq\Form\Form;
-use Coroq\Form\Input;
-use Coroq\Form\Input\Select;
-use Coroq\Form\Input\MultiSelect;
+use Coroq\Form\FormItem;
+use Coroq\Form\ErrorMessageFormatter;
+use Coroq\Form\BasicErrorMessages;
 use PHPUnit\Framework\TestCase;
 
 class FormTest extends TestCase {
-  public function testValue() {
+  private function createHtmlForm(Form $form): HtmlForm {
+    $formatter = new ErrorMessageFormatter();
+    $formatter->setMessages(BasicErrorMessages::get());
+    return new HtmlForm($form, $formatter);
+  }
+
+  public function testValue(): void {
     $form = new Form();
-    $form->a = (new Input())->setValue("A");
-    $form = new HtmlForm($form);
+    $form->a = (new FormItem\TextInput())->setValue("A");
+    $htmlForm = $this->createHtmlForm($form);
     $this->assertEquals(
       Html::escape("A"),
-      $form->value("a")
+      $htmlForm->value("a")
     );
   }
-  
-  public function testInputText() {
+
+  public function testInputText(): void {
     $form = new Form();
-    $form->x = (new Input())
+    $form->x = (new FormItem\TextInput())
       ->setValue("X");
-    $form = new HtmlForm($form);
+    $htmlForm = $this->createHtmlForm($form);
     $h = (new Html())
       ->tag("input")
       ->attr("type", "text")
       ->attr("name", "x")
       ->attr("value", "X")
       ->attr("required", true);
-    $this->assertEquals($h, $form->inputText("x"));
+    $this->assertEquals($h, $htmlForm->inputText("x"));
   }
 
-  public function testTextarea() {
+  public function testTextarea(): void {
     $form = new Form();
-    $form->x = (new Input())
+    $form->x = (new FormItem\TextInput())
+      ->setMultiline(true)
       ->setValue("X\nY\nZ");
-    $form = new HtmlForm($form);
+    $htmlForm = $this->createHtmlForm($form);
     $h = (new Html())
       ->tag("textarea")
       ->attr("name", "x")
       ->attr("required", true)
       ->append("X\nY\nZ");
-    $this->assertEquals($h, $form->textarea("x"));
+    $this->assertEquals($h, $htmlForm->textarea("x"));
   }
 
-  public function testInputCheckboxes() {
+  public function testInputCheckboxes(): void {
     $form = new Form();
     $options = ["a" => "A", "b" => "B", "c" => "C"];
-    $form->x = (new Select())
+    $form->x = (new FormItem\Select())
       ->setOptions($options)
       ->setValue("b");
-    $form = new HtmlForm($form);
+    $htmlForm = $this->createHtmlForm($form);
     $expected = [];
     foreach ($options as $value => $label) {
       $h = (new Html())
@@ -68,17 +77,17 @@ class FormTest extends TestCase {
     }
     $this->assertEquals(
       $expected,
-      $form->inputCheckboxes("x")
+      $htmlForm->inputCheckboxes("x")
     );
   }
 
-  public function testInputCheckboxesForMultiSelect() {
+  public function testInputCheckboxesForMultiSelect(): void {
     $form = new Form();
     $options = ["a" => "A", "b" => "B", "c" => "C"];
-    $form->x = (new MultiSelect())
+    $form->x = (new FormItem\MultiSelect())
       ->setOptions($options)
       ->setValue(["a", "b"]);
-    $form = new HtmlForm($form);
+    $htmlForm = $this->createHtmlForm($form);
     $expected = [];
     foreach ($options as $value => $label) {
       $h = (new Html())
@@ -95,16 +104,16 @@ class FormTest extends TestCase {
     }
     $this->assertEquals(
       $expected,
-      $form->inputCheckboxes("x")
+      $htmlForm->inputCheckboxes("x")
     );
   }
-  
-  public function testSelect() {
+
+  public function testSelect(): void {
     $form = new Form();
-    $form->x = (new Select())
+    $form->x = (new FormItem\Select())
       ->setOptions(["a" => "A", "b" => "B", "c" => "C"])
       ->setValue("b");
-    $form = new HtmlForm($form);
+    $htmlForm = $this->createHtmlForm($form);
     $h = (new Html())
       ->tag("select")
       ->attr("name", "x")
@@ -119,6 +128,6 @@ class FormTest extends TestCase {
         }
         return $h;
       }, ["a", "b", "c"]));
-    $this->assertEquals($h, $form->select("x"));
+    $this->assertEquals($h, $htmlForm->select("x"));
   }
 }
