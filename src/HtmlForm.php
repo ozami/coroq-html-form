@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Coroq\HtmlForm;
 
-use Coroq\Form\Form;
+use Coroq\Form\FormInterface;
 use Coroq\Form\FormItem\FormItemInterface;
 use Coroq\Form\FormItem\HasLengthRange;
 use Coroq\Form\FormItem\HasNumericRange;
@@ -10,15 +10,15 @@ use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Html\Html;
 
 class HtmlForm {
-  private Form $form;
+  private FormInterface $form;
   private ErrorMessageFormatter $errorMessageFormatter;
 
-  public function __construct(Form $form, ErrorMessageFormatter $errorMessageFormatter) {
+  public function __construct(FormInterface $form, ErrorMessageFormatter $errorMessageFormatter) {
     $this->form = $form;
     $this->errorMessageFormatter = $errorMessageFormatter;
   }
 
-  public function getForm(): Form {
+  public function getForm(): FormInterface {
     return $this->form;
   }
 
