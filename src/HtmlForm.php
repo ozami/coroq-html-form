@@ -4,8 +4,8 @@ namespace Coroq\HtmlForm;
 
 use Coroq\Form\FormInterface;
 use Coroq\Form\FormItem\FormItemInterface;
-use Coroq\Form\FormItem\HasLengthRange;
-use Coroq\Form\FormItem\HasNumericRange;
+use Coroq\Form\FormItem\HasLengthRangeInterface;
+use Coroq\Form\FormItem\HasNumericRangeInterface;
 use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Html\Html;
 
@@ -368,8 +368,8 @@ class HtmlForm {
       $attrs["disabled"] = true;
     }
 
-    // Check for HasLengthRange interface
-    if ($input instanceof HasLengthRange) {
+    // Check for HasLengthRangeInterface interface
+    if ($input instanceof HasLengthRangeInterface) {
       $max_length = $input->getMaxLength();
       if ($max_length < PHP_INT_MAX) {
         $attrs["maxlength"] = $max_length;
@@ -380,8 +380,8 @@ class HtmlForm {
       }
     }
 
-    // Check for HasNumericRange interface
-    if ($input instanceof HasNumericRange) {
+    // Check for HasNumericRangeInterface interface
+    if ($input instanceof HasNumericRangeInterface) {
       $max = $input->getMax();
       if ($max !== INF) {
         $attrs["max"] = $max;

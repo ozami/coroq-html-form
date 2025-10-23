@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4cc3039340d9f60b8d1f0339590b1aed",
+    "content-hash": "4599eff2e4e7cfac3e3c93299d01aefe",
     "packages": [
         {
             "name": "coroq/form",
-            "version": "3.0.0-alpha2",
+            "version": "3.0.0-alpha3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-form.git",
-                "reference": "332f1980857378e88d81bc4177cb40b03cc2aed8"
+                "reference": "a903a4b92a75eee8dc4ac782d00abf195531bd29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/332f1980857378e88d81bc4177cb40b03cc2aed8",
-                "reference": "332f1980857378e88d81bc4177cb40b03cc2aed8",
+                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/a903a4b92a75eee8dc4ac782d00abf195531bd29",
+                "reference": "a903a4b92a75eee8dc4ac782d00abf195531bd29",
                 "shasum": ""
             },
             "require": {
@@ -36,6 +36,12 @@
             "scripts": {
                 "test": [
                     "@php vendor/bin/phpunit test/"
+                ],
+                "coverage": [
+                    "@php vendor/bin/phpunit test/ --coverage-html coverage"
+                ],
+                "coverage-text": [
+                    "@php vendor/bin/phpunit test/ --coverage-text"
                 ]
             },
             "license": [
@@ -48,10 +54,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/ozami/coroq-form/tree/3.0.0-alpha2",
+                "source": "https://github.com/ozami/coroq-form/tree/3.0.0-alpha3",
                 "issues": "https://github.com/ozami/coroq-form/issues"
             },
-            "time": "2025-10-21T03:40:01+00:00"
+            "time": "2025-10-23T13:05:47+00:00"
         },
         {
             "name": "coroq/html",
@@ -233,16 +239,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.6.1",
+            "version": "v5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2"
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3a454ca033b9e06b63282ce19562e892747449bb",
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb",
                 "shasum": ""
             },
             "require": {
@@ -285,9 +291,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.1"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.2"
             },
-            "time": "2025-08-13T20:13:15+00:00"
+            "time": "2025-10-21T19:32:17+00:00"
         },
         {
             "name": "phar-io/manifest",
