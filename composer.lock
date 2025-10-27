@@ -4,24 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4599eff2e4e7cfac3e3c93299d01aefe",
+    "content-hash": "008cc922ace7a7030908f955079cae2e",
     "packages": [
         {
             "name": "coroq/form",
-            "version": "3.0.0-alpha3",
+            "version": "3.0.0-alpha5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-form.git",
-                "reference": "a903a4b92a75eee8dc4ac782d00abf195531bd29"
+                "reference": "3e6efdbffe709c019160858f6976a0418df2ea82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/a903a4b92a75eee8dc4ac782d00abf195531bd29",
-                "reference": "a903a4b92a75eee8dc4ac782d00abf195531bd29",
+                "url": "https://api.github.com/repos/ozami/coroq-form/zipball/3e6efdbffe709c019160858f6976a0418df2ea82",
+                "reference": "3e6efdbffe709c019160858f6976a0418df2ea82",
                 "shasum": ""
             },
             "require": {
-                "lib-pcre": "*",
+                "ext-bcmath": "*",
+                "ext-fileinfo": "*",
+                "ext-filter": "*",
+                "ext-mbstring": "*",
                 "php": ">=8.0"
             },
             "require-dev": {
@@ -54,10 +57,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/ozami/coroq-form/tree/3.0.0-alpha3",
+                "source": "https://github.com/ozami/coroq-form/tree/3.0.0-alpha5",
                 "issues": "https://github.com/ozami/coroq-form/issues"
             },
-            "time": "2025-10-23T13:05:47+00:00"
+            "time": "2025-10-27T23:30:11+00:00"
         },
         {
             "name": "coroq/html",
@@ -109,30 +112,30 @@
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
-            "version": "2.0.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0"
+                "reference": "0a0fa9780f5d4e507415a065172d26a98d02047b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
-                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/0a0fa9780f5d4e507415a065172d26a98d02047b",
+                "reference": "0a0fa9780f5d4e507415a065172d26a98d02047b",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^7.1 || ^8.0"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^11",
+                "doctrine/coding-standard": "^9 || ^11",
                 "ext-pdo": "*",
                 "ext-phar": "*",
-                "phpbench/phpbench": "^1.2",
-                "phpstan/phpstan": "^1.9.4",
-                "phpstan/phpstan-phpunit": "^1.3",
-                "phpunit/phpunit": "^9.5.27",
-                "vimeo/psalm": "^5.4"
+                "phpbench/phpbench": "^0.16 || ^1",
+                "phpstan/phpstan": "^1.4",
+                "phpstan/phpstan-phpunit": "^1",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "vimeo/psalm": "^4.30 || ^5.4"
             },
             "type": "library",
             "autoload": {
@@ -159,7 +162,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/instantiator/issues",
-                "source": "https://github.com/doctrine/instantiator/tree/2.0.0"
+                "source": "https://github.com/doctrine/instantiator/tree/1.5.0"
             },
             "funding": [
                 {
@@ -175,7 +178,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-12-30T00:23:10+00:00"
+            "time": "2022-12-30T00:15:36+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1913,9 +1916,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0",
-        "lib-pcre": "*"
+        "php": ">=8.0"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

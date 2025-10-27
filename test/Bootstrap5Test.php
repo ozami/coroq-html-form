@@ -6,13 +6,22 @@ use Coroq\HtmlForm\Integration\Bootstrap5;
 use Coroq\Form\Form;
 use Coroq\Form\FormItem;
 use Coroq\Form\ErrorMessageFormatter;
-use Coroq\Form\BasicErrorMessages;
+use Coroq\Form\Error;
 use PHPUnit\Framework\TestCase;
 
 class Bootstrap5Test extends TestCase {
   private function createHtmlForm(Form $form): Bootstrap5 {
     $formatter = new ErrorMessageFormatter();
-    $formatter->setMessages(BasicErrorMessages::get());
+    $formatter->setMessages([
+      Error\EmptyError::class => 'This field is required',
+      Error\InvalidError::class => 'Invalid value',
+      Error\InvalidEmailError::class => 'Invalid email address',
+      Error\TooShortError::class => 'Too short',
+      Error\TooLongError::class => 'Too long',
+      Error\TooSmallError::class => 'Too small',
+      Error\TooLargeError::class => 'Too large',
+      Error\NotIntegerError::class => 'Must be an integer',
+    ]);
     return new Bootstrap5($form, $formatter);
   }
 
