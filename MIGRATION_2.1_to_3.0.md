@@ -6,7 +6,7 @@ This guide helps you upgrade from coroq/html-form version 2.1.0 to 3.0.0.
 
 Version 3.0.0 introduces breaking changes primarily due to:
 - Upgrade to PHP 8.0+ with strict type declarations
-- Dependency upgrade to `coroq/form` 3.0-alpha
+- Dependency upgrade to `coroq/form` 3.0.0-alpha5
 - Constructor changes requiring `ErrorMessageFormatter`
 - Interface-based architecture instead of concrete `Form` class
 - New Bootstrap 5 integration
@@ -21,7 +21,7 @@ Version 3.0.0 introduces breaking changes primarily due to:
 
 ### After (3.0.0)
 - PHP >= 8.0
-- coroq/form 3.0.0-alpha2
+- coroq/form 3.0.0-alpha5
 - coroq/html 0.2.0
 
 ## Breaking Changes
@@ -241,7 +241,7 @@ Update your `composer.json`:
   "require": {
     "php": ">=8.0",
     "coroq/html-form": "^3.0",
-    "coroq/form": "3.0.0-alpha2"
+    "coroq/form": "3.0.0-alpha5"
   }
 }
 ```
