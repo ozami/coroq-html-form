@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb0d129a64786e51f427fc2ef1b4563d",
+    "content-hash": "289c902d2ad5d9716d3a9f33c75aa20f",
     "packages": [
         {
             "name": "coroq/form",
@@ -64,29 +64,29 @@
         },
         {
             "name": "coroq/html",
-            "version": "0.2.0",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-html.git",
-                "reference": "7842791899e28b45cfa0c3803ee856801a3cf4fd"
+                "reference": "74f0c697d7063b0ee6069bf6aedfc81e9108934e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/7842791899e28b45cfa0c3803ee856801a3cf4fd",
-                "reference": "7842791899e28b45cfa0c3803ee856801a3cf4fd",
+                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/74f0c697d7063b0ee6069bf6aedfc81e9108934e",
+                "reference": "74f0c697d7063b0ee6069bf6aedfc81e9108934e",
                 "shasum": ""
             },
             "require": {
                 "lib-pcre": "*",
-                "php": ">=7.2"
+                "php": ">=8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
                 "files": [
-                    "src/shorthands.php"
+                    "src/helpers.php"
                 ],
                 "psr-4": {
                     "Coroq\\Html\\": "src/"
@@ -104,9 +104,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ozami/coroq-html/issues",
-                "source": "https://github.com/ozami/coroq-html/tree/0.2.0"
+                "source": "https://github.com/ozami/coroq-html/tree/0.4.0"
             },
-            "time": "2023-04-16T06:14:19+00:00"
+            "time": "2025-11-06T05:28:36+00:00"
         }
     ],
     "packages-dev": [

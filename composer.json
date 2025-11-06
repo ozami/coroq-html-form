@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=8.0",
-        "coroq/html": "0.2.0",
+        "coroq/html": "0.4.0",
         "coroq/form": "3.0.0-alpha6"
     },
     "require-dev": {
