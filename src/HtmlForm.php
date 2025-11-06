@@ -8,6 +8,7 @@ use Coroq\Form\FormItem\HasLengthRangeInterface;
 use Coroq\Form\FormItem\HasNumericRangeInterface;
 use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Html\Html;
+use LogicException;
 
 class HtmlForm {
   private FormInterface $form;
@@ -25,7 +26,7 @@ class HtmlForm {
   /**
    * Traverse form to get item at path
    * @param string|array<string> $item_path Path like "name" or "address/city" or ["address", "city"]
-   * @throws \LogicException If path is invalid or item not found
+   * @throws LogicException If path is invalid or item not found
    */
   protected function getItemIn(string|array $item_path): FormItemInterface {
     $path = is_array($item_path) ? $item_path : explode("/", $item_path);
@@ -33,15 +34,12 @@ class HtmlForm {
     $current = $this->form;
 
     foreach ($path as $segment) {
-      // Use FormInterface::getItem() method
-      if ($current instanceof \Coroq\Form\FormInterface) {
-        $current = $current->getItem($segment);
-        if ($current === null) {
-          throw new \LogicException("Item '$segment' not found in form");
-        }
+      if (!($current instanceof FormInterface)) {
+        throw new LogicException("Item '$item_path' not found in form");
       }
-      else {
-        throw new \LogicException("Cannot traverse path - current item is not a FormInterface");
+      $current = $current->getItem($segment);
+      if ($current === null) {
+        throw new LogicException("Item '$item_path' not found in form");
       }
     }
 
@@ -87,7 +85,7 @@ class HtmlForm {
     }
     $time = strtotime($value);
     if ($time === false) {
-      throw new \RuntimeException("Invaild date time string '$value'");
+      throw new LogicException("Invaild date time string '$value'");
     }
     return (new Html())->append(date($format, $time));
   }
@@ -242,9 +240,9 @@ class HtmlForm {
    * @param string|array<string> $item_path
    */
   public function inputCheckable(string|array $item_path, string $type, string $value): Html {
-    $h = $this->input($item_path, $type);
     $item = $this->getItemIn($item_path);
     $selected = $item->getValue();
+    $h = $this->input($item_path, $type);
     if (is_array($selected)) {
       $h->attr("name", $this->makeName($item_path) . "[]");
     }
@@ -278,16 +276,14 @@ class HtmlForm {
    */
   public function select(string|array $item_path): Html {
     $item = $this->getItemIn($item_path);
+    $isArray = is_array($item->getValue());
     $h = (new Html())
       ->tag("select")
+      ->attr("name", $this->makeName($item_path) . ($isArray ? "[]" : ""))
       ->attrs($this->getGeneralAttributesFromInput($item))
       ->children($this->options($item_path));
-    if (is_array($item->getValue())) {
-      $h->attr("name", $this->makeName($item_path) . "[]");
+    if ($isArray) {
       $h->attr("multiple", true);
-    }
-    else {
-      $h->attr("name", $this->makeName($item_path));
     }
     return $h;
   }

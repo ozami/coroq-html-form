@@ -517,7 +517,7 @@ class FormTest extends TestCase {
     $form->created = (new FormItem\DateInput())->setValue("invalid-date");
     $htmlForm = $this->createHtmlForm($form);
 
-    $this->expectException(\RuntimeException::class);
+    $this->expectException(\LogicException::class);
     $this->expectExceptionMessage("Invaild date time string");
     $htmlForm->date("created", "Y-m-d");
   }
@@ -594,7 +594,7 @@ class FormTest extends TestCase {
 
     // Try to traverse into a TextInput (which is not a FormInterface, so we can't traverse deeper)
     $this->expectException(\LogicException::class);
-    $this->expectExceptionMessage("Cannot traverse path - current item is not a FormInterface");
+    $this->expectExceptionMessage("Item 'name/invalid' not found in form");
     $htmlForm->value("name/invalid");
   }
 }
