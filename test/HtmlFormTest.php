@@ -9,7 +9,7 @@ use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Form\Error;
 use PHPUnit\Framework\TestCase;
 
-class FormTest extends TestCase {
+class HtmlFormTest extends TestCase {
   private function createHtmlForm(Form $form): HtmlForm {
     $formatter = new ErrorMessageFormatter();
     $formatter->setMessages([
