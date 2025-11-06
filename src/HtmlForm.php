@@ -14,11 +14,17 @@ class HtmlForm {
   private FormInterface $form;
   private ErrorMessageFormatter $errorMessageFormatter;
 
+  /**
+   * Create a new HtmlForm instance
+   */
   public function __construct(FormInterface $form, ErrorMessageFormatter $errorMessageFormatter) {
     $this->form = $form;
     $this->errorMessageFormatter = $errorMessageFormatter;
   }
 
+  /**
+   * Get the underlying form object
+   */
   public function getForm(): FormInterface {
     return $this->form;
   }
@@ -47,6 +53,7 @@ class HtmlForm {
   }
 
   /**
+   * Get form item value wrapped in Html object
    * @param string|array<string> $item_path
    */
   public function value(string|array $item_path): Html {
@@ -54,6 +61,7 @@ class HtmlForm {
   }
 
   /**
+   * Format form item value using sprintf
    * @param string|array<string> $item_path
    */
   public function format(string|array $item_path, string $format): Html {
@@ -65,6 +73,7 @@ class HtmlForm {
   }
 
   /**
+   * Format numeric value with number_format
    * @param string|array<string> $item_path
    */
   public function number(string|array $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
@@ -76,6 +85,7 @@ class HtmlForm {
   }
 
   /**
+   * Format date value with date formatting
    * @param string|array<string> $item_path
    */
   public function date(string|array $item_path, string $format): Html {
@@ -91,6 +101,7 @@ class HtmlForm {
   }
 
   /**
+   * Get selected label(s) from select/multi-select item
    * @param string|array<string> $item_path
    * @return Html|array<Html>
    */
@@ -105,6 +116,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate input element with specified type
    * @param string|array<string> $item_path
    */
   public function input(string|array $item_path, string $type): Html {
@@ -118,6 +130,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate text input element
    * @param string|array<string> $item_path
    */
   public function inputText(string|array $item_path): Html {
@@ -125,6 +138,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate number input element
    * @param string|array<string> $item_path
    */
   public function inputNumber(string|array $item_path): Html {
@@ -132,6 +146,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate email input element
    * @param string|array<string> $item_path
    */
   public function inputEmail(string|array $item_path): Html {
@@ -139,6 +154,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate tel input element
    * @param string|array<string> $item_path
    */
   public function inputTel(string|array $item_path): Html {
@@ -146,6 +162,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate date input element
    * @param string|array<string> $item_path
    */
   public function inputDate(string|array $item_path): Html {
@@ -153,6 +170,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate hidden input element
    * @param string|array<string> $item_path
    */
   public function inputHidden(string|array $item_path): Html {
@@ -160,6 +178,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate password input element
    * @param string|array<string> $item_path
    */
   public function inputPassword(string|array $item_path): Html {
@@ -167,6 +186,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate file input element
    * @param string|array<string> $item_path
    */
   public function inputFile(string|array $item_path): Html {
@@ -174,6 +194,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate URL input element
    * @param string|array<string> $item_path
    */
   public function inputUrl(string|array $item_path): Html {
@@ -181,6 +202,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate textarea element
    * @param string|array<string> $item_path
    */
   public function textarea(string|array $item_path): Html {
@@ -193,6 +215,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate single checkbox input element
    * @param string|array<string> $item_path
    */
   public function inputCheckbox(string|array $item_path, string $value): Html {
@@ -200,7 +223,7 @@ class HtmlForm {
   }
 
   /**
-   * Boolean checkbox - for BooleanInput (single checkbox without value)
+   * Generate boolean checkbox input element
    * @param string|array<string> $item_path
    */
   public function inputBoolean(string|array $item_path, string $value = "1"): Html {
@@ -214,6 +237,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate all checkbox elements for a form item
    * @param string|array<string> $item_path
    * @return array<string|int, Html>
    */
@@ -222,6 +246,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate single radio button input element
    * @param string|array<string> $item_path
    */
   public function inputRadio(string|array $item_path, string $value): Html {
@@ -229,6 +254,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate all radio button elements for a form item
    * @param string|array<string> $item_path
    * @return array<string|int, Html>
    */
@@ -237,6 +263,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate checkable input element (checkbox or radio)
    * @param string|array<string> $item_path
    */
   public function inputCheckable(string|array $item_path, string $type, string $value): Html {
@@ -254,6 +281,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate all checkable elements (checkboxes or radios) for a form item
    * @param string|array<string> $item_path
    * @return array<string|int, Html>
    */
@@ -272,6 +300,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate select element
    * @param string|array<string> $item_path
    */
   public function select(string|array $item_path): Html {
@@ -289,6 +318,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate option elements for a select
    * @param string|array<string> $item_path
    * @return array<Html>
    */
@@ -310,6 +340,7 @@ class HtmlForm {
   }
 
   /**
+   * Generate error message elements for form items
    * @param string|array<string>|array<string|array<string>> $item_paths
    */
   public function error(string|array $item_paths): Html {
@@ -334,6 +365,7 @@ class HtmlForm {
   }
 
   /**
+   * Convert item path to HTML name attribute with array notation
    * @param string|array<string> $item_path
    */
   public function makeName(string|array $item_path): string {
@@ -346,6 +378,7 @@ class HtmlForm {
   }
 
   /**
+   * Extract HTML validation attributes from form item
    * @return array<string, mixed>
    */
   protected function getGeneralAttributesFromInput(FormItemInterface $input): array {
