@@ -387,4 +387,214 @@ class FormTest extends TestCase {
     $this->assertEquals("yes", $input->getAttr("value"));
     $this->assertTrue($input->getAttr("checked"));
   }
+
+  // Additional input type tests
+  public function testInputTel(): void {
+    $form = new Form();
+    $form->phone = (new FormItem\TextInput())->setValue("+1-555-1234");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputTel("phone");
+
+    $this->assertEquals("tel", $input->getAttr("type"));
+    $this->assertEquals("+1-555-1234", $input->getAttr("value"));
+  }
+
+  public function testInputDate(): void {
+    $form = new Form();
+    $form->birthday = (new FormItem\DateInput())->setValue("2024-01-15");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputDate("birthday");
+
+    $this->assertEquals("date", $input->getAttr("type"));
+    $this->assertEquals("2024-01-15", $input->getAttr("value"));
+  }
+
+  public function testInputHidden(): void {
+    $form = new Form();
+    $form->token = (new FormItem\TextInput())->setValue("secret123");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputHidden("token");
+
+    $this->assertEquals("hidden", $input->getAttr("type"));
+    $this->assertEquals("secret123", $input->getAttr("value"));
+  }
+
+  public function testInputPassword(): void {
+    $form = new Form();
+    $form->pass = (new FormItem\TextInput())->setValue("mypassword");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputPassword("pass");
+
+    $this->assertEquals("password", $input->getAttr("type"));
+    $this->assertEquals("mypassword", $input->getAttr("value"));
+  }
+
+  public function testInputFile(): void {
+    $form = new Form();
+    $form->upload = (new FormItem\TextInput())->setValue("");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputFile("upload");
+
+    $this->assertEquals("file", $input->getAttr("type"));
+    $this->assertEquals("upload", $input->getAttr("name"));
+  }
+
+  public function testInputEmail(): void {
+    $form = new Form();
+    $form->email = (new FormItem\EmailInput())->setValue("test@example.com");
+    $htmlForm = $this->createHtmlForm($form);
+    $input = $htmlForm->inputEmail("email");
+
+    $this->assertEquals("email", $input->getAttr("type"));
+    $this->assertEquals("test@example.com", $input->getAttr("value"));
+  }
+
+  // Test getForm method
+  public function testGetForm(): void {
+    $form = new Form();
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertSame($form, $htmlForm->getForm());
+  }
+
+  // Test selected() with array values
+  public function testSelectedWithMultipleValues(): void {
+    $form = new Form();
+    $form->colors = (new FormItem\MultiSelect())
+      ->setOptions(["r" => "Red", "g" => "Green", "b" => "Blue"])
+      ->setValue(["r", "b"]);
+    $htmlForm = $this->createHtmlForm($form);
+    $selected = $htmlForm->selected("colors");
+
+    $this->assertIsArray($selected);
+    $this->assertCount(2, $selected);
+    $this->assertEquals((new Html())->append("Red"), $selected[0]);
+    $this->assertEquals((new Html())->append("Blue"), $selected[1]);
+  }
+
+  public function testSelectedWithSingleValue(): void {
+    $form = new Form();
+    $form->size = (new FormItem\Select())
+      ->setOptions(["s" => "Small", "m" => "Medium", "l" => "Large"])
+      ->setValue("m");
+    $htmlForm = $this->createHtmlForm($form);
+    $selected = $htmlForm->selected("size");
+
+    $this->assertInstanceOf(Html::class, $selected);
+    $this->assertEquals((new Html())->append("Medium"), $selected);
+  }
+
+  // Test format with empty value
+  public function testFormatWithEmptyValue(): void {
+    $form = new Form();
+    $form->price = (new FormItem\NumberInput())->setValue("");
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertEquals(new Html(), $htmlForm->format("price", "Price: $%s"));
+  }
+
+  // Test number with empty value
+  public function testNumberWithEmptyValue(): void {
+    $form = new Form();
+    $form->amount = (new FormItem\NumberInput())->setValue("");
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertEquals(new Html(), $htmlForm->number("amount", 2));
+  }
+
+  // Test date with empty value
+  public function testDateWithEmptyValue(): void {
+    $form = new Form();
+    $form->created = (new FormItem\DateInput())->setValue("");
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertEquals(new Html(), $htmlForm->date("created", "Y-m-d"));
+  }
+
+  // Test date with invalid value
+  public function testDateWithInvalidValue(): void {
+    $form = new Form();
+    $form->created = (new FormItem\DateInput())->setValue("invalid-date");
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage("Invaild date time string");
+    $htmlForm->date("created", "Y-m-d");
+  }
+
+  // Test error with no errors
+  public function testErrorWithNoErrors(): void {
+    $form = new Form();
+    $form->name = (new FormItem\TextInput())->setValue("John");
+    $htmlForm = $this->createHtmlForm($form);
+    $error = $htmlForm->error("name");
+
+    $this->assertInstanceOf(Html::class, $error);
+    $this->assertEmpty($error->getChildren());
+  }
+
+  // Test nested path with array notation
+  public function testNestedPathWithArrayNotation(): void {
+    $form = new Form();
+    $form->user = new Form();
+    $form->user->profile = new Form();
+    $form->user->profile->name = (new FormItem\TextInput())->setValue("Alice");
+
+    $htmlForm = $this->createHtmlForm($form);
+    $this->assertEquals(
+      (new Html())->append("Alice"),
+      $htmlForm->value(["user", "profile", "name"])
+    );
+  }
+
+  // Test inputCheckbox individual method
+  public function testInputCheckbox(): void {
+    $form = new Form();
+    $form->color = (new FormItem\Select())
+      ->setOptions(["r" => "Red", "g" => "Green"])
+      ->setValue("r");
+    $htmlForm = $this->createHtmlForm($form);
+    $checkbox = $htmlForm->inputCheckbox("color", "r");
+
+    $this->assertEquals("checkbox", $checkbox->getAttr("type"));
+    $this->assertEquals("r", $checkbox->getAttr("value"));
+    $this->assertTrue($checkbox->getAttr("checked"));
+  }
+
+  // Test inputRadio individual method
+  public function testInputRadio(): void {
+    $form = new Form();
+    $form->size = (new FormItem\Select())
+      ->setOptions(["s" => "Small", "m" => "Medium"])
+      ->setValue("m");
+    $htmlForm = $this->createHtmlForm($form);
+    $radio = $htmlForm->inputRadio("size", "m");
+
+    $this->assertEquals("radio", $radio->getAttr("type"));
+    $this->assertEquals("m", $radio->getAttr("value"));
+    $this->assertTrue($radio->getAttr("checked"));
+  }
+
+  // Test getItemIn error conditions
+  public function testGetItemInWithInvalidPath(): void {
+    $form = new Form();
+    $form->name = (new FormItem\TextInput())->setValue("Test");
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->expectException(\LogicException::class);
+    $this->expectExceptionMessage("Item 'nonexistent' not found in form");
+    $htmlForm->value("nonexistent");
+  }
+
+  public function testGetItemInCannotTraverseNonFormInterface(): void {
+    $form = new Form();
+    // Create a TextInput, which is a FormItemInterface but not a FormInterface
+    $form->name = (new FormItem\TextInput())->setValue("Test");
+    $htmlForm = $this->createHtmlForm($form);
+
+    // Try to traverse into a TextInput (which is not a FormInterface, so we can't traverse deeper)
+    $this->expectException(\LogicException::class);
+    $this->expectExceptionMessage("Cannot traverse path - current item is not a FormInterface");
+    $htmlForm->value("name/invalid");
+  }
 }

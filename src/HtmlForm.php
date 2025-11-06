@@ -45,10 +45,6 @@ class HtmlForm {
       }
     }
 
-    if (!($current instanceof FormItemInterface)) {
-      throw new \LogicException("Path does not resolve to a FormItemInterface");
-    }
-
     return $current;
   }
 
