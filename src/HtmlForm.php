@@ -290,9 +290,10 @@ class HtmlForm {
 
   /**
    * Generate checkable input element (checkbox or radio)
+   * Reached through inputCheckbox() and inputRadio(); override it to change both
    * @param string $item_path
    */
-  public function inputCheckable(string $item_path, string $type, string $value): Html {
+  protected function inputCheckable(string $item_path, string $type, string $value): Html {
     $item = $this->getItemIn($item_path);
     $selected = $item->getValue();
     $h = $this->input($item_path, $type);
@@ -308,14 +309,14 @@ class HtmlForm {
 
   /**
    * Generate all checkable elements (checkboxes or radios) for a form item
+   * Reached through inputCheckboxes() and inputRadios()
    * @param string $item_path
    * @return array<string|int, Html>
    */
-  public function inputCheckables(string $item_path, string $type): array {
-    $fn = [$this, "input$type"];
+  protected function inputCheckables(string $item_path, string $type): array {
     $inputs = [];
     foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
-      $input = call_user_func($fn, $item_path, $value);
+      $input = $this->inputCheckable($item_path, $type, "$value");
       $input->attr("title", $label);
       if ($type == "checkbox") {
         $input->attr("required", false);
