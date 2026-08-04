@@ -35,6 +35,30 @@ class HtmlFormTest extends TestCase {
     );
   }
 
+  public function testInputUsesAValueThatCanBeAString(): void {
+    $money = new class {
+      public function __toString(): string {
+        return "JPY 1,000";
+      }
+    };
+    $form = new Form();
+    $form->s = (new FormItem\Input())->setValue($money);
+    $htmlForm = $this->createHtmlForm($form);
+    $this->assertSame(
+      '<input type="text" name="s" value="JPY 1,000" required>',
+      (string)$htmlForm->inputText("s")
+    );
+  }
+
+  public function testInputSetsNoValueWhenTheValueHasNoStringForm(): void {
+    $form = new Form();
+    $form->o = (new FormItem\Input())->setValue(new \stdClass());
+    $form->a = (new FormItem\MultiSelect())->setOptions(["a" => "A"])->setValue(["a"]);
+    $htmlForm = $this->createHtmlForm($form);
+    $this->assertSame('<input type="text" name="o" required>', (string)$htmlForm->inputText("o"));
+    $this->assertSame('<input type="text" name="a" required>', (string)$htmlForm->inputText("a"));
+  }
+
   public function testInputText(): void {
     $form = new Form();
     $form->x = (new FormItem\TextInput())

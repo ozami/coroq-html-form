@@ -117,15 +117,22 @@ class HtmlForm {
 
   /**
    * Generate input element with specified type
+   *
+   * A value attribute is a string, but an item value is mixed. A value with no
+   * string form, such as the array a multi-select holds, sets no value
+   * attribute; inputCheckable() supplies one per option in that case.
+   *
    * @param string|array<string> $item_path
    */
   public function input(string|array $item_path, string $type): Html {
     $item = $this->getItemIn($item_path);
+    $value = $item->getValue();
+    $canBeString = is_scalar($value) || $value instanceof \Stringable;
     return (new Html())
       ->tag("input")
       ->attr("type", $type)
       ->attr("name", $this->makeName($item_path))
-      ->attr("value", $item->getValue())
+      ->attr("value", $canBeString ? $value : null)
       ->attrs($this->getGeneralAttributesFromInput($item));
   }
 
