@@ -29,10 +29,7 @@ class HtmlFormTest extends TestCase {
     $form = new Form();
     $form->a = (new FormItem\TextInput())->setValue("A");
     $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      Html::escape("A"),
-      $htmlForm->value("a")
-    );
+    $this->assertSame("A", (string)$htmlForm->value("a"));
   }
 
   public function testInputUsesAValueThatCanBeAString(): void {

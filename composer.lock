@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "98c2540a41dc7c148fc5f038159d27a4",
+    "content-hash": "12f1aa6c6ceafbc89059e9a1e45d1469",
     "packages": [
         {
             "name": "coroq/form",
@@ -54,22 +54,23 @@
         },
         {
             "name": "coroq/html",
-            "version": "v0.5.0",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-html.git",
-                "reference": "8568ca2b25f2817774c266982f3f5866be65206b"
+                "reference": "a14f842a189121b49ee5f48b63780aa40df1c9ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/8568ca2b25f2817774c266982f3f5866be65206b",
-                "reference": "8568ca2b25f2817774c266982f3f5866be65206b",
+                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/a14f842a189121b49ee5f48b63780aa40df1c9ef",
+                "reference": "a14f842a189121b49ee5f48b63780aa40df1c9ef",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0"
             },
             "require-dev": {
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "^9.5"
             },
             "type": "library",
@@ -95,15 +96,13 @@
             "keywords": [
                 "escaping",
                 "html",
-                "security",
-                "template",
-                "xss"
+                "template"
             ],
             "support": {
                 "issues": "https://github.com/ozami/coroq-html/issues",
-                "source": "https://github.com/ozami/coroq-html/tree/v0.5.0"
+                "source": "https://github.com/ozami/coroq-html/tree/v1.0.0"
             },
-            "time": "2026-07-27T14:15:57+00:00"
+            "time": "2026-08-02T16:48:11+00:00"
         }
     ],
     "packages-dev": [
