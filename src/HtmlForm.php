@@ -8,11 +8,13 @@ use Coroq\Form\FormItem\HasLengthRangeInterface;
 use Coroq\Form\FormItem\HasNumericRangeInterface;
 use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Html\Html;
+use InvalidArgumentException;
 use LogicException;
 
 class HtmlForm {
   private FormInterface $form;
   private ErrorMessageFormatter $errorMessageFormatter;
+  private string $itemPathDelimiter = "/";
 
   /**
    * Create a new HtmlForm instance
@@ -30,16 +32,33 @@ class HtmlForm {
   }
 
   /**
+   * Get the item path delimiter
+   */
+  public function getItemPathDelimiter(): string {
+    return $this->itemPathDelimiter;
+  }
+
+  /**
+   * Set the item path delimiter
+   * Change it when an item name has to contain "/"
+   */
+  public function setItemPathDelimiter(string $delimiter): static {
+    if ($delimiter === "") {
+      throw new InvalidArgumentException("An item path delimiter cannot be empty");
+    }
+    $this->itemPathDelimiter = $delimiter;
+    return $this;
+  }
+
+  /**
    * Traverse form to get item at path
-   * @param string|array<string> $item_path Path like "name" or "address/city" or ["address", "city"]
+   * @param string $item_path Path like "name" or "address/city"
    * @throws LogicException If path is invalid or item not found
    */
-  protected function getItemIn(string|array $item_path): FormItemInterface {
-    $path = is_array($item_path) ? $item_path : explode("/", $item_path);
-
+  protected function getItemIn(string $item_path): FormItemInterface {
     $current = $this->form;
 
-    foreach ($path as $segment) {
+    foreach (explode($this->itemPathDelimiter, $item_path) as $segment) {
       if (!($current instanceof FormInterface)) {
         throw new LogicException("Item '$item_path' not found in form");
       }
@@ -54,17 +73,17 @@ class HtmlForm {
 
   /**
    * Get form item value wrapped in Html object
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function value(string|array $item_path): Html {
+  public function value(string $item_path): Html {
     return (new Html())->append($this->getItemIn($item_path)->getValue());
   }
 
   /**
    * Format form item value using sprintf
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function format(string|array $item_path, string $format): Html {
+  public function format(string $item_path, string $format): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -74,9 +93,9 @@ class HtmlForm {
 
   /**
    * Format numeric value with number_format
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function number(string|array $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
+  public function number(string $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -86,9 +105,9 @@ class HtmlForm {
 
   /**
    * Format date value with date formatting
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function date(string|array $item_path, string $format): Html {
+  public function date(string $item_path, string $format): Html {
     $value = $this->getItemIn($item_path)->getValue();
     if ($value == "") {
       return new Html();
@@ -102,10 +121,10 @@ class HtmlForm {
 
   /**
    * Get selected label(s) from select/multi-select item
-   * @param string|array<string> $item_path
+   * @param string $item_path
    * @return Html|array<Html>
    */
-  public function selected(string|array $item_path): Html|array {
+  public function selected(string $item_path): Html|array {
     $item = $this->getItemIn($item_path);
     if (is_array($item->getValue())) {
       return array_map(function($label) {
@@ -122,9 +141,9 @@ class HtmlForm {
    * string form, such as the array a multi-select holds, sets no value
    * attribute; inputCheckable() supplies one per option in that case.
    *
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function input(string|array $item_path, string $type): Html {
+  public function input(string $item_path, string $type): Html {
     $item = $this->getItemIn($item_path);
     $value = $item->getValue();
     $canBeString = is_scalar($value) || $value instanceof \Stringable;
@@ -138,81 +157,81 @@ class HtmlForm {
 
   /**
    * Generate text input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputText(string|array $item_path): Html {
+  public function inputText(string $item_path): Html {
     return $this->input($item_path, "text");
   }
 
   /**
    * Generate number input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputNumber(string|array $item_path): Html {
+  public function inputNumber(string $item_path): Html {
     return $this->input($item_path, "number");
   }
 
   /**
    * Generate email input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputEmail(string|array $item_path): Html {
+  public function inputEmail(string $item_path): Html {
     return $this->input($item_path, "email");
   }
 
   /**
    * Generate tel input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputTel(string|array $item_path): Html {
+  public function inputTel(string $item_path): Html {
     return $this->input($item_path, "tel");
   }
 
   /**
    * Generate date input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputDate(string|array $item_path): Html {
+  public function inputDate(string $item_path): Html {
     return $this->input($item_path, "date");
   }
 
   /**
    * Generate hidden input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputHidden(string|array $item_path): Html {
+  public function inputHidden(string $item_path): Html {
     return $this->input($item_path, "hidden");
   }
 
   /**
    * Generate password input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputPassword(string|array $item_path): Html {
+  public function inputPassword(string $item_path): Html {
     return $this->input($item_path, "password");
   }
 
   /**
    * Generate file input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputFile(string|array $item_path): Html {
+  public function inputFile(string $item_path): Html {
     return $this->input($item_path, "file");
   }
 
   /**
    * Generate URL input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputUrl(string|array $item_path): Html {
+  public function inputUrl(string $item_path): Html {
     return $this->input($item_path, "url");
   }
 
   /**
    * Generate textarea element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function textarea(string|array $item_path): Html {
+  public function textarea(string $item_path): Html {
     $item = $this->getItemIn($item_path);
     return (new Html())
       ->tag("textarea")
@@ -223,17 +242,17 @@ class HtmlForm {
 
   /**
    * Generate single checkbox input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputCheckbox(string|array $item_path, string $value): Html {
+  public function inputCheckbox(string $item_path, string $value): Html {
     return $this->inputCheckable($item_path, "checkbox", $value);
   }
 
   /**
    * Generate boolean checkbox input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputBoolean(string|array $item_path, string $value = "1"): Html {
+  public function inputBoolean(string $item_path, string $value = "1"): Html {
     $item = $this->getItemIn($item_path);
     $h = $this->input($item_path, "checkbox");
     $h->attr("value", $value);
@@ -245,35 +264,35 @@ class HtmlForm {
 
   /**
    * Generate all checkbox elements for a form item
-   * @param string|array<string> $item_path
+   * @param string $item_path
    * @return array<string|int, Html>
    */
-  public function inputCheckboxes(string|array $item_path): array {
+  public function inputCheckboxes(string $item_path): array {
     return $this->inputCheckables($item_path, "checkbox");
   }
 
   /**
    * Generate single radio button input element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputRadio(string|array $item_path, string $value): Html {
+  public function inputRadio(string $item_path, string $value): Html {
     return $this->inputCheckable($item_path, "radio", $value);
   }
 
   /**
    * Generate all radio button elements for a form item
-   * @param string|array<string> $item_path
+   * @param string $item_path
    * @return array<string|int, Html>
    */
-  public function inputRadios(string|array $item_path): array {
+  public function inputRadios(string $item_path): array {
     return $this->inputCheckables($item_path, "radio");
   }
 
   /**
    * Generate checkable input element (checkbox or radio)
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function inputCheckable(string|array $item_path, string $type, string $value): Html {
+  public function inputCheckable(string $item_path, string $type, string $value): Html {
     $item = $this->getItemIn($item_path);
     $selected = $item->getValue();
     $h = $this->input($item_path, $type);
@@ -289,10 +308,10 @@ class HtmlForm {
 
   /**
    * Generate all checkable elements (checkboxes or radios) for a form item
-   * @param string|array<string> $item_path
+   * @param string $item_path
    * @return array<string|int, Html>
    */
-  public function inputCheckables(string|array $item_path, string $type): array {
+  public function inputCheckables(string $item_path, string $type): array {
     $fn = [$this, "input$type"];
     $inputs = [];
     foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
@@ -308,9 +327,9 @@ class HtmlForm {
 
   /**
    * Generate select element
-   * @param string|array<string> $item_path
+   * @param string $item_path
    */
-  public function select(string|array $item_path): Html {
+  public function select(string $item_path): Html {
     $item = $this->getItemIn($item_path);
     $isArray = is_array($item->getValue());
     $h = (new Html())
@@ -326,10 +345,10 @@ class HtmlForm {
 
   /**
    * Generate option elements for a select
-   * @param string|array<string> $item_path
+   * @param string $item_path
    * @return array<Html>
    */
-  public function options(string|array $item_path): array {
+  public function options(string $item_path): array {
     $item = $this->getItemIn($item_path);
     $selected = (array)$item->getValue();
     $options = [];
@@ -349,9 +368,9 @@ class HtmlForm {
   /**
    * Generate error message elements for form items
    * Several paths make one block for fields shown side by side; duplicate messages appear once
-   * @param string|array<string> ...$item_paths
+   * @param string ...$item_paths
    */
-  public function error(string|array ...$item_paths): Html {
+  public function error(string ...$item_paths): Html {
     $errors = [];
     foreach ($item_paths as $item_path) {
       $item = $this->getItemIn($item_path);
@@ -374,10 +393,11 @@ class HtmlForm {
 
   /**
    * Convert item path to HTML name attribute with array notation
-   * @param string|array<string> $item_path
+   * An item name cannot contain the delimiter, "[" or "]"
+   * @param string $item_path
    */
-  public function makeName(string|array $item_path): string {
-    $path = is_string($item_path) ? explode("/", $item_path) : $item_path;
+  public function makeName(string $item_path): string {
+    $path = explode($this->itemPathDelimiter, $item_path);
     $name = array_shift($path);
     foreach ($path as $node) {
       $name .= "[$node]";
