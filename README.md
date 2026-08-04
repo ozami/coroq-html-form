@@ -124,14 +124,15 @@ $form->address = new Form();
 $form->address->city = new FormItem\TextInput();
 $form->address->postal = new FormItem\TextInput();
 
-// String path
 echo $htmlForm->inputText('address/city');
 // <input type="text" name="address[city]" required>
 
-// Array path
-echo $htmlForm->inputText(['address', 'postal']);
+echo $htmlForm->inputText('address/postal');
 // <input type="text" name="address[postal]" required>
 ```
+
+An item name cannot contain the delimiter, `[` or `]`. Use
+`setItemPathDelimiter()` to change the delimiter from `/`.
 
 ## Displaying Values
 

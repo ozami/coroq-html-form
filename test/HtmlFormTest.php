@@ -360,11 +360,27 @@ class HtmlFormTest extends TestCase {
     $this->assertEquals("order[items][0]", $htmlForm->makeName("order/items/0"));
   }
 
-  public function testMakeNameWithArray(): void {
+  public function testItemPathDelimiterIsNotHardCoded(): void {
     $form = new Form();
-    $htmlForm = $this->createHtmlForm($form);
+    $form->user = new Form();
+    $form->user->email = (new FormItem\EmailInput())->setValue("test@example.com");
 
-    $this->assertEquals("user[address][city]", $htmlForm->makeName(["user", "address", "city"]));
+    $htmlForm = $this->createHtmlForm($form);
+    $htmlForm->setItemPathDelimiter(".");
+
+    $this->assertEquals(".", $htmlForm->getItemPathDelimiter());
+    $this->assertEquals("user[email]", $htmlForm->makeName("user.email"));
+    $this->assertEquals(
+      (new Html())->append("test@example.com"),
+      $htmlForm->value("user.email")
+    );
+  }
+
+  public function testEmptyItemPathDelimiterIsRejected(): void {
+    $htmlForm = $this->createHtmlForm(new Form());
+
+    $this->expectException(InvalidArgumentException::class);
+    $htmlForm->setItemPathDelimiter("");
   }
 
   // New FormItem types in 3.0.0-alpha2
@@ -555,7 +571,7 @@ class HtmlFormTest extends TestCase {
   }
 
   // Test nested path with array notation
-  public function testNestedPathWithArrayNotation(): void {
+  public function testDeeplyNestedPath(): void {
     $form = new Form();
     $form->user = new Form();
     $form->user->profile = new Form();
@@ -564,7 +580,7 @@ class HtmlFormTest extends TestCase {
     $htmlForm = $this->createHtmlForm($form);
     $this->assertEquals(
       (new Html())->append("Alice"),
-      $htmlForm->value(["user", "profile", "name"])
+      $htmlForm->value("user/profile/name")
     );
   }
 
