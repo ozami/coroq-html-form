@@ -152,7 +152,7 @@ class HtmlForm {
       ->attr("type", $type)
       ->attr("name", $this->makeName($item_path))
       ->attr("value", $canBeString ? $value : null)
-      ->attrs($this->getGeneralAttributesFromInput($item));
+      ->attrs($this->getGeneralAttributes($item));
   }
 
   /**
@@ -236,7 +236,7 @@ class HtmlForm {
     return (new Html())
       ->tag("textarea")
       ->attr("name", $this->makeName($item_path))
-      ->attrs($this->getGeneralAttributesFromInput($item))
+      ->attrs($this->getGeneralAttributes($item))
       ->append($item->getValue());
   }
 
@@ -335,7 +335,7 @@ class HtmlForm {
     $h = (new Html())
       ->tag("select")
       ->attr("name", $this->makeName($item_path) . ($isArray ? "[]" : ""))
-      ->attrs($this->getGeneralAttributesFromInput($item))
+      ->attrs($this->getGeneralAttributes($item))
       ->children($this->options($item_path));
     if ($isArray) {
       $h->attr("multiple", true);
@@ -406,40 +406,38 @@ class HtmlForm {
   }
 
   /**
-   * Extract HTML validation attributes from form item
+   * Extract HTML state and validation attributes from form item
    * @return array<string, mixed>
    */
-  protected function getGeneralAttributesFromInput(FormItemInterface $input): array {
+  protected function getGeneralAttributes(FormItemInterface $item): array {
     $attrs = [];
-    if ($input->isRequired()) {
+    if ($item->isRequired()) {
       $attrs["required"] = true;
     }
-    if ($input->isReadOnly()) {
+    if ($item->isReadOnly()) {
       $attrs["readonly"] = true;
     }
-    if ($input->isDisabled()) {
+    if ($item->isDisabled()) {
       $attrs["disabled"] = true;
     }
 
-    // Check for HasLengthRangeInterface interface
-    if ($input instanceof HasLengthRangeInterface) {
-      $max_length = $input->getMaxLength();
+    if ($item instanceof HasLengthRangeInterface) {
+      $max_length = $item->getMaxLength();
       if ($max_length < PHP_INT_MAX) {
         $attrs["maxlength"] = $max_length;
       }
-      $min_length = $input->getMinLength();
+      $min_length = $item->getMinLength();
       if ($min_length > 0) {
         $attrs["minlength"] = $min_length;
       }
     }
 
-    // Check for HasNumericRangeInterface interface
-    if ($input instanceof HasNumericRangeInterface) {
-      $max = $input->getMax();
+    if ($item instanceof HasNumericRangeInterface) {
+      $max = $item->getMax();
       if ($max !== INF) {
         $attrs["max"] = $max;
       }
-      $min = $input->getMin();
+      $min = $item->getMin();
       if ($min !== -INF) {
         $attrs["min"] = $min;
       }
