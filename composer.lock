@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aa8893520ccbddf72b4ed46b40e9d33",
+    "content-hash": "98c2540a41dc7c148fc5f038159d27a4",
     "packages": [
         {
             "name": "coroq/form",
@@ -54,16 +54,16 @@
         },
         {
             "name": "coroq/html",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ozami/coroq-html.git",
-                "reference": "ca9be4cd000eb8f2ce33d2144d7b405ca6c6521b"
+                "reference": "8568ca2b25f2817774c266982f3f5866be65206b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/ca9be4cd000eb8f2ce33d2144d7b405ca6c6521b",
-                "reference": "ca9be4cd000eb8f2ce33d2144d7b405ca6c6521b",
+                "url": "https://api.github.com/repos/ozami/coroq-html/zipball/8568ca2b25f2817774c266982f3f5866be65206b",
+                "reference": "8568ca2b25f2817774c266982f3f5866be65206b",
                 "shasum": ""
             },
             "require": {
@@ -91,11 +91,19 @@
                     "email": "ozawa@coroq.com"
                 }
             ],
+            "description": "HTML escaping for PHP templates",
+            "keywords": [
+                "escaping",
+                "html",
+                "security",
+                "template",
+                "xss"
+            ],
             "support": {
                 "issues": "https://github.com/ozami/coroq-html/issues",
-                "source": "https://github.com/ozami/coroq-html/tree/v0.4.0"
+                "source": "https://github.com/ozami/coroq-html/tree/v0.5.0"
             },
-            "time": "2025-11-21T14:35:36+00:00"
+            "time": "2026-07-27T14:15:57+00:00"
         }
     ],
     "packages-dev": [
@@ -1906,5 +1914,5 @@
         "php": "^8.0"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
