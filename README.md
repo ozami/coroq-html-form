@@ -155,6 +155,18 @@ echo $htmlForm->date('created', 'F d, Y');
 // Custom format
 echo $htmlForm->format('price', 'Price: $%s');
 // Price: $1234.56
+
+// Label of the chosen option, for a confirmation page
+echo $htmlForm->selected('country');
+// Japan
+```
+
+A multi-select puts one label in each child of the returned `Html`, so nothing
+separates them until you say so:
+
+```php
+echo h(implode(', ', $htmlForm->selected('colors')->getChildren()));
+// Red, Blue
 ```
 
 ## Error Handling

@@ -527,7 +527,6 @@ class HtmlFormTest extends TestCase {
     $this->assertSame($form, $htmlForm->getForm());
   }
 
-  // Test selected() with array values
   public function testSelectedWithMultipleValues(): void {
     $form = new Form();
     $form->colors = (new FormItem\MultiSelect())
@@ -536,10 +535,8 @@ class HtmlFormTest extends TestCase {
     $htmlForm = $this->createHtmlForm($form);
     $selected = $htmlForm->selected("colors");
 
-    $this->assertIsArray($selected);
-    $this->assertCount(2, $selected);
-    $this->assertEquals((new Html())->append("Red"), $selected[0]);
-    $this->assertEquals((new Html())->append("Blue"), $selected[1]);
+    $this->assertEquals(["Red", "Blue"], $selected->getChildren());
+    $this->assertSame("RedBlue", (string)$selected);
   }
 
   public function testSelectedWithSingleValue(): void {
@@ -550,8 +547,8 @@ class HtmlFormTest extends TestCase {
     $htmlForm = $this->createHtmlForm($form);
     $selected = $htmlForm->selected("size");
 
-    $this->assertInstanceOf(Html::class, $selected);
     $this->assertEquals((new Html())->append("Medium"), $selected);
+    $this->assertSame("Medium", (string)$selected);
   }
 
   // Test format with empty value

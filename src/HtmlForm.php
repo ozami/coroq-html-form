@@ -131,17 +131,12 @@ class HtmlForm {
 
   /**
    * Get selected label(s) from select/multi-select item
+   * A multi-select puts one label in each child, so getChildren() reaches them
+   * separately and nothing separates them until the caller says so
    * @param string $item_path
-   * @return Html|array<Html>
    */
-  public function selected(string $item_path): Html|array {
-    $item = $this->getItemIn($item_path);
-    if (is_array($item->getValue())) {
-      return array_map(function($label) {
-        return (new Html())->append($label);
-      }, $item->getSelectedLabel());
-    }
-    return (new Html())->append($item->getSelectedLabel());
+  public function selected(string $item_path): Html {
+    return (new Html())->append($this->getItemIn($item_path)->getSelectedLabel());
   }
 
   /**
