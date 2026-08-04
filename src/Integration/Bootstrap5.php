@@ -46,8 +46,8 @@ class Bootstrap5 extends HtmlForm {
   /**
    * @param string|array<string>|array<string|array<string>> $item_paths
    */
-  public function error(string|array $item_paths): Html {
-    return parent::error($item_paths)->tag("div")->addClass("invalid-feedback");
+  public function error(string|array ...$item_paths): Html {
+    return parent::error(...$item_paths)->tag("div")->addClass("invalid-feedback");
   }
 
   /**

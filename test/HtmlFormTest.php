@@ -318,7 +318,7 @@ class HtmlFormTest extends TestCase {
     $form->name->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $error = $htmlForm->error(["email", "name"]);
+    $error = $htmlForm->error("email", "name");
 
     $this->assertInstanceOf(Html::class, $error);
     $children = $error->getChildren();
