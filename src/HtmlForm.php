@@ -72,11 +72,21 @@ class HtmlForm {
   }
 
   /**
+   * Get an item value that can be a string, or null if it cannot
+   * An item value is mixed, but everything displayed is text. A value with no
+   * string form, such as the array a multi-select holds, displays nothing.
+   */
+  private function getStringValueIn(string $item_path): string|int|float|bool|\Stringable|null {
+    $value = $this->getItemIn($item_path)->getValue();
+    return is_scalar($value) || $value instanceof \Stringable ? $value : null;
+  }
+
+  /**
    * Get form item value wrapped in Html object
    * @param string $item_path
    */
   public function value(string $item_path): Html {
-    return (new Html())->append($this->getItemIn($item_path)->getValue());
+    return (new Html())->append($this->getStringValueIn($item_path));
   }
 
   /**
@@ -84,7 +94,7 @@ class HtmlForm {
    * @param string $item_path
    */
   public function format(string $item_path, string $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->getStringValueIn($item_path);
     if ($value == "") {
       return new Html();
     }
@@ -96,11 +106,11 @@ class HtmlForm {
    * @param string $item_path
    */
   public function number(string $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->getStringValueIn($item_path);
     if ($value == "") {
       return new Html();
     }
-    return (new Html())->append(number_format((float)$value, $decimals, $dec_point, $thousands_sep));
+    return (new Html())->append(number_format((float)"$value", $decimals, $dec_point, $thousands_sep));
   }
 
   /**
@@ -108,11 +118,11 @@ class HtmlForm {
    * @param string $item_path
    */
   public function date(string $item_path, string $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
+    $value = $this->getStringValueIn($item_path);
     if ($value == "") {
       return new Html();
     }
-    $time = strtotime($value);
+    $time = strtotime("$value");
     if ($time === false) {
       throw new LogicException("Invaild date time string '$value'");
     }
@@ -136,23 +146,17 @@ class HtmlForm {
 
   /**
    * Generate input element with specified type
-   *
-   * A value attribute is a string, but an item value is mixed. A value with no
-   * string form, such as the array a multi-select holds, sets no value
-   * attribute; inputCheckable() supplies one per option in that case.
-   *
+   * A value with no string form sets no value attribute; inputCheckable()
+   * supplies one per option in that case
    * @param string $item_path
    */
   public function input(string $item_path, string $type): Html {
-    $item = $this->getItemIn($item_path);
-    $value = $item->getValue();
-    $canBeString = is_scalar($value) || $value instanceof \Stringable;
     return (new Html())
       ->tag("input")
       ->attr("type", $type)
       ->attr("name", $this->makeName($item_path))
-      ->attr("value", $canBeString ? $value : null)
-      ->attrs($this->getGeneralAttributes($item));
+      ->attr("value", $this->getStringValueIn($item_path))
+      ->attrs($this->getGeneralAttributes($this->getItemIn($item_path)));
   }
 
   /**

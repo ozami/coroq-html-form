@@ -192,6 +192,39 @@ class HtmlFormTest extends TestCase {
     );
   }
 
+  public function testValueDisplayShowsNothingWhenTheValueHasNoStringForm(): void {
+    $form = new Form();
+    $form->colors = (new FormItem\MultiSelect())
+      ->setOptions(["r" => "Red", "b" => "Blue"])
+      ->setValue(["r", "b"]);
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertSame("", (string)$htmlForm->value("colors"));
+    $this->assertSame("", (string)$htmlForm->format("colors", "%s"));
+    $this->assertSame("", (string)$htmlForm->number("colors"));
+    $this->assertSame("", (string)$htmlForm->date("colors", "Y-m-d"));
+  }
+
+  public function testValueDisplayUsesAValueThatCanBeAString(): void {
+    $form = new Form();
+    $form->price = (new FormItem\Input())->setValue(new class {
+      public function __toString(): string {
+        return "1234.5";
+      }
+    });
+    $form->created = (new FormItem\Input())->setValue(new class {
+      public function __toString(): string {
+        return "2024-01-15";
+      }
+    });
+    $htmlForm = $this->createHtmlForm($form);
+
+    $this->assertSame("1234.5", (string)$htmlForm->value("price"));
+    $this->assertSame("1,234.50", (string)$htmlForm->number("price", 2));
+    $this->assertSame("JPY 1234.5", (string)$htmlForm->format("price", "JPY %s"));
+    $this->assertSame("January 15, 2024", (string)$htmlForm->date("created", "F d, Y"));
+  }
+
   // Validation attributes tests
   public function testInputTextWithLengthConstraints(): void {
     $form = new Form();
