@@ -348,11 +348,12 @@ class HtmlForm {
 
   /**
    * Generate error message elements for form items
-   * @param string|array<string>|array<string|array<string>> $item_paths
+   * Several paths make one block for fields shown side by side; duplicate messages appear once
+   * @param string|array<string> ...$item_paths
    */
-  public function error(string|array $item_paths): Html {
+  public function error(string|array ...$item_paths): Html {
     $errors = [];
-    foreach ((array)$item_paths as $item_path) {
+    foreach ($item_paths as $item_path) {
       $item = $this->getItemIn($item_path);
       $errorObj = $item->getError();
       if ($errorObj) {
