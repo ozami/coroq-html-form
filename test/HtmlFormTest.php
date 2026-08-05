@@ -585,7 +585,7 @@ class HtmlFormTest extends TestCase {
     $htmlForm = $this->createHtmlForm($form);
 
     $this->expectException(\LogicException::class);
-    $this->expectExceptionMessage("Invaild date time string");
+    $this->expectExceptionMessage("Invalid date time string");
     $htmlForm->date("created", "Y-m-d");
   }
 

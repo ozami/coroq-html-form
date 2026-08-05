@@ -124,7 +124,7 @@ class HtmlForm {
     }
     $time = strtotime("$value");
     if ($time === false) {
-      throw new LogicException("Invaild date time string '$value'");
+      throw new LogicException("Invalid date time string '$value'");
     }
     return (new Html())->append(date($format, $time));
   }
