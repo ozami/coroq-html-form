@@ -304,6 +304,11 @@ class HtmlForm {
     if (in_array("$value", (array)$selected, true)) {
       $h->attr("checked", true);
     }
+    if ($type == "checkbox") {
+      // required on one box of a group would demand that every box be checked.
+      // inputBoolean() does not come through here, so its checkbox keeps it.
+      $h->attr("required", false);
+    }
     return $h;
   }
 
@@ -318,9 +323,6 @@ class HtmlForm {
     foreach ($this->getItemIn($item_path)->getOptions() as $value => $label) {
       $input = $this->inputCheckable($item_path, $type, "$value");
       $input->attr("title", $label);
-      if ($type == "checkbox") {
-        $input->attr("required", false);
-      }
       $inputs[$value] = $input;
     }
     return $inputs;

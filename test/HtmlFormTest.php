@@ -138,6 +138,21 @@ class HtmlFormTest extends TestCase {
     );
   }
 
+  public function testOneCheckboxOfAGroupIsNotRequired(): void {
+    $form = new Form();
+    $form->size = (new FormItem\Select())
+      ->setOptions(["s" => "Small", "m" => "Medium"])
+      ->setValue("m");
+    $form->agree = new FormItem\BooleanInput();
+    $htmlForm = $this->createHtmlForm($form);
+
+    // required on one box of a group would demand that every box be checked
+    $this->assertNull($htmlForm->inputCheckbox("size", "s")->getAttr("required"));
+    // a radio group is required as a whole, and a lone boolean checkbox is its own group
+    $this->assertTrue($htmlForm->inputRadio("size", "s")->getAttr("required"));
+    $this->assertTrue($htmlForm->inputBoolean("agree")->getAttr("required"));
+  }
+
   public function testSelect(): void {
     $form = new Form();
     $form->x = (new FormItem\Select())
