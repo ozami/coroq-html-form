@@ -29,37 +29,41 @@ class Bootstrap5Test extends TestCase {
     $form = new Form();
     $form->name = (new FormItem\TextInput())->setValue("test");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputText("name");
-
-    $this->assertStringContainsString("form-control", $input->getAttr("class"));
+    $this->assertSame(
+      '<input type="text" name="name" value="test" required class="form-control">',
+      (string)$htmlForm->inputText("name")
+    );
   }
 
   public function testInputNumberHasFormControl(): void {
     $form = new Form();
     $form->age = (new FormItem\IntegerInput())->setValue("25");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputNumber("age");
-
-    $this->assertStringContainsString("form-control", $input->getAttr("class"));
+    $this->assertSame(
+      '<input type="number" name="age" value="25" required class="form-control">',
+      (string)$htmlForm->inputNumber("age")
+    );
   }
 
   public function testInputFileHasFormControl(): void {
     $form = new Form();
     $form->upload = new FormItem\FileInput();
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputFile("upload");
-
     // Bootstrap 5 uses form-control for file inputs (not form-control-file like BS4)
-    $this->assertStringContainsString("form-control", $input->getAttr("class"));
+    $this->assertSame(
+      '<input type="file" name="upload" value="" class="form-control">',
+      (string)$htmlForm->inputFile("upload")
+    );
   }
 
   public function testTextareaHasFormControl(): void {
     $form = new Form();
     $form->bio = (new FormItem\TextInput())->setMultiline(true)->setValue("Bio");
     $htmlForm = $this->createHtmlForm($form);
-    $textarea = $htmlForm->textarea("bio");
-
-    $this->assertStringContainsString("form-control", $textarea->getAttr("class"));
+    $this->assertSame(
+      '<textarea name="bio" required class="form-control">Bio</textarea>',
+      (string)$htmlForm->textarea("bio")
+    );
   }
 
   public function testSelectHasFormSelect(): void {
@@ -68,10 +72,11 @@ class Bootstrap5Test extends TestCase {
       ->setOptions(["us" => "USA", "jp" => "Japan"])
       ->setValue("us");
     $htmlForm = $this->createHtmlForm($form);
-    $select = $htmlForm->select("country");
-
     // Bootstrap 5 uses form-select for select elements
-    $this->assertStringContainsString("form-select", $select->getAttr("class"));
+    $this->assertSame(
+      '<select name="country" required class="form-select"><option value="us" selected>USA</option><option value="jp">Japan</option></select>',
+      (string)$htmlForm->select("country")
+    );
   }
 
   public function testCheckboxHasFormCheckInput(): void {
@@ -80,9 +85,10 @@ class Bootstrap5Test extends TestCase {
       ->setOptions(["yes" => "I agree"])
       ->setValue("yes");
     $htmlForm = $this->createHtmlForm($form);
-    $checkbox = $htmlForm->inputCheckbox("agree", "yes");
-
-    $this->assertStringContainsString("form-check-input", $checkbox->getAttr("class"));
+    $this->assertSame(
+      '<input type="checkbox" name="agree" value="yes" class="form-check-input" checked>',
+      (string)$htmlForm->inputCheckbox("agree", "yes")
+    );
   }
 
   public function testRadioHasFormCheckInput(): void {
@@ -91,9 +97,10 @@ class Bootstrap5Test extends TestCase {
       ->setOptions(["s" => "Small", "m" => "Medium"])
       ->setValue("m");
     $htmlForm = $this->createHtmlForm($form);
-    $radio = $htmlForm->inputRadio("size", "m");
-
-    $this->assertStringContainsString("form-check-input", $radio->getAttr("class"));
+    $this->assertSame(
+      '<input type="radio" name="size" value="m" required class="form-check-input" checked>',
+      (string)$htmlForm->inputRadio("size", "m")
+    );
   }
 
   public function testInputWithErrorHasIsInvalid(): void {
@@ -103,9 +110,10 @@ class Bootstrap5Test extends TestCase {
     $form->email->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputEmail("email");
-
-    $this->assertStringContainsString("is-invalid", $input->getAttr("class"));
+    $this->assertSame(
+      '<input type="email" name="email" value="invalid-email" required class="form-control is-invalid">',
+      (string)$htmlForm->inputEmail("email")
+    );
   }
 
   public function testInputWithoutErrorHasNoIsInvalid(): void {
@@ -115,10 +123,10 @@ class Bootstrap5Test extends TestCase {
     $form->email->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputEmail("email");
-
-    $class = $input->getAttr("class");
-    $this->assertStringNotContainsString("is-invalid", $class ?? "");
+    $this->assertSame(
+      '<input type="email" name="email" value="valid@example.com" required class="form-control">',
+      (string)$htmlForm->inputEmail("email")
+    );
   }
 
   public function testErrorHasInvalidFeedback(): void {
@@ -128,20 +136,20 @@ class Bootstrap5Test extends TestCase {
     $form->email->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $error = $htmlForm->error("email");
-
-    $this->assertStringContainsString("invalid-feedback", $error->getAttr("class"));
-    $this->assertEquals("div", $error->getTag());
+    $this->assertSame(
+      '<div class="invalid-feedback"><div>Invalid email address</div></div>',
+      (string)$htmlForm->error("email")
+    );
   }
 
   public function testHiddenInputHasNoClasses(): void {
     $form = new Form();
     $form->token = (new FormItem\TextInput())->setValue("abc123");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputHidden("token");
-
-    $class = $input->getAttr("class");
-    $this->assertNull($class);
+    $this->assertSame(
+      '<input type="hidden" name="token" value="abc123" required>',
+      (string)$htmlForm->inputHidden("token")
+    );
   }
 
   public function testMultipleClassesApplied(): void {
@@ -152,10 +160,9 @@ class Bootstrap5Test extends TestCase {
     $form->username->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputText("username");
-
-    $class = $input->getAttr("class");
-    $this->assertStringContainsString("form-control", $class);
-    $this->assertStringContainsString("is-invalid", $class);
+    $this->assertSame(
+      '<input type="text" name="username" value="" required class="form-control is-invalid">',
+      (string)$htmlForm->inputText("username")
+    );
   }
 }
