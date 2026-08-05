@@ -8,7 +8,7 @@ Generates HTML form elements from `coroq/form` objects with validation attribute
 composer require coroq/html-form
 ```
 
-Requires PHP 8.0+, `coroq/form` 3.0.0, and `coroq/html` 1.0.0.
+Requires PHP 8.0+, `coroq/form` 3.x, and `coroq/html` 1.x.
 
 ## Basic Usage
 
@@ -17,7 +17,7 @@ use Coroq\Form\Form;
 use Coroq\Form\FormItem;
 use Coroq\HtmlForm\HtmlForm;
 use Coroq\Form\ErrorMessageFormatter;
-use Coroq\Form\BasicErrorMessages;
+use Coroq\Form\Error;
 
 // Create form
 $form = new Form();
@@ -31,18 +31,22 @@ $form->age = (new FormItem\IntegerInput())
 
 // Create HTML form generator
 $formatter = new ErrorMessageFormatter();
-$formatter->setMessages(BasicErrorMessages::get());
+$formatter->setMessages([
+    Error\EmptyError::class => 'This field is required',
+    Error\InvalidEmailError::class => 'Invalid email address',
+    Error\Error::class => 'Invalid value', // a base class matches last
+]);
 $htmlForm = new HtmlForm($form, $formatter);
 
 // Generate inputs
 echo $htmlForm->inputText('username');
-// <input type="text" name="username" required minlength="3" maxlength="20">
+// <input type="text" name="username" value="" required maxlength="20" minlength="3">
 
 echo $htmlForm->inputEmail('email');
-// <input type="email" name="email" required>
+// <input type="email" name="email" value="" required>
 
 echo $htmlForm->inputNumber('age');
-// <input type="number" name="age" required min="18" max="100">
+// <input type="number" name="age" value="" required max="100" min="18">
 ```
 
 ## Input Types
@@ -65,7 +69,7 @@ $htmlForm->textarea('bio');
 // Boolean checkbox
 $form->agree = new FormItem\BooleanInput();
 echo $htmlForm->inputBoolean('agree');
-// <input type="checkbox" name="agree" value="1">
+// <input type="checkbox" name="agree" value="1" required>
 ```
 
 ## Select and Options
@@ -92,7 +96,7 @@ $form->colors = (new FormItem\MultiSelect())
     ->setValue(['r', 'b']);
 
 echo $htmlForm->select('colors');
-// <select name="colors[]" multiple required>...</select>
+// <select name="colors[]" required multiple>...</select>
 ```
 
 ## Checkboxes and Radios
@@ -125,10 +129,10 @@ $form->address->city = new FormItem\TextInput();
 $form->address->postal = new FormItem\TextInput();
 
 echo $htmlForm->inputText('address/city');
-// <input type="text" name="address[city]" required>
+// <input type="text" name="address[city]" value="" required>
 
 echo $htmlForm->inputText('address/postal');
-// <input type="text" name="address[postal]" required>
+// <input type="text" name="address[postal]" value="" required>
 ```
 
 An item name cannot contain the delimiter, `[` or `]`. Use
@@ -179,11 +183,11 @@ $form->email->validate();
 echo $htmlForm->error('email');
 // <div>Invalid email address</div>
 
-// Multiple fields
-echo $htmlForm->error(['email', 'username']);
+// One block for several fields
+echo $htmlForm->error('email', 'username');
 
 // Check for errors
-if ($htmlForm->getItemIn('email')->hasError()) {
+if ($form->email->hasError()) {
     // ...
 }
 ```
@@ -192,7 +196,7 @@ if ($htmlForm->getItemIn('email')->hasError()) {
 
 ```php
 // Optional field
-$form->nickname = (new FormItem\TextInput())
+$form->optional = (new FormItem\TextInput())
     ->setRequired(false);
 
 // Disabled field
@@ -204,10 +208,10 @@ $form->computed = (new FormItem\TextInput())
     ->setReadOnly(true);
 
 echo $htmlForm->inputText('optional');
-// <input type="text" name="optional">
+// <input type="text" name="optional" value="">
 
 echo $htmlForm->inputText('locked');
-// <input type="text" name="locked" disabled required>
+// <input type="text" name="locked" value="" required disabled>
 ```
 
 ## Bootstrap Integration
@@ -220,18 +224,18 @@ use Coroq\HtmlForm\Integration\Bootstrap4;
 $htmlForm = new Bootstrap4($form, $formatter);
 
 echo $htmlForm->inputText('username');
-// <input type="text" name="username" class="form-control" required>
+// <input type="text" name="username" value="" required maxlength="20" minlength="3" class="form-control">
 
 echo $htmlForm->select('country');
-// <select name="country" class="form-control" required>...</select>
+// <select name="country" required class="form-control">...</select>
 
 // With validation errors
 $form->email->validate(); // Fails
 echo $htmlForm->inputEmail('email');
-// <input type="email" name="email" class="form-control is-invalid" required>
+// <input type="email" name="email" value="" required class="form-control is-invalid">
 
 echo $htmlForm->error('email');
-// <div class="invalid-feedback">Invalid email address</div>
+// <div class="invalid-feedback"><div>Invalid email address</div></div>
 ```
 
 ### Bootstrap 5
@@ -242,7 +246,7 @@ use Coroq\HtmlForm\Integration\Bootstrap5;
 $htmlForm = new Bootstrap5($form, $formatter);
 
 echo $htmlForm->select('country');
-// <select name="country" class="form-select" required>...</select>
+// <select name="country" required class="form-select">...</select>
 // Note: Bootstrap 5 uses form-select instead of form-control
 ```
 
@@ -272,7 +276,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Create HTML generator
 $formatter = new ErrorMessageFormatter();
-$formatter->setMessages(BasicErrorMessages::get());
+$formatter->setMessages([
+    Error\EmptyError::class => 'This field is required',
+    Error\InvalidEmailError::class => 'Invalid email address',
+    Error\Error::class => 'Invalid value', // a base class matches last
+]);
 $htmlForm = new HtmlForm($form, $formatter);
 ?>
 
