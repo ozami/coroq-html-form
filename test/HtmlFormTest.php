@@ -147,10 +147,19 @@ class HtmlFormTest extends TestCase {
     $htmlForm = $this->createHtmlForm($form);
 
     // required on one box of a group would demand that every box be checked
-    $this->assertNull($htmlForm->inputCheckbox("size", "s")->getAttr("required"));
+    $this->assertSame(
+      '<input type="checkbox" name="size" value="s">',
+      (string)$htmlForm->inputCheckbox("size", "s")
+    );
     // a radio group is required as a whole, and a lone boolean checkbox is its own group
-    $this->assertTrue($htmlForm->inputRadio("size", "s")->getAttr("required"));
-    $this->assertTrue($htmlForm->inputBoolean("agree")->getAttr("required"));
+    $this->assertSame(
+      '<input type="radio" name="size" value="s" required>',
+      (string)$htmlForm->inputRadio("size", "s")
+    );
+    $this->assertSame(
+      '<input type="checkbox" name="agree" value="1" required>',
+      (string)$htmlForm->inputBoolean("agree")
+    );
   }
 
   public function testSelect(): void {
@@ -268,8 +277,12 @@ class HtmlFormTest extends TestCase {
       ->setValue("locked")
       ->setDisabled(true);
     $htmlForm = $this->createHtmlForm($form);
-    $result = $htmlForm->inputText("locked");
-    $this->assertTrue($result->getAttr("disabled"));
+    // coroq/form 3.0.1 made a disabled item report its empty value, so the
+    // value attribute is empty however the item was set.
+    $this->assertSame(
+      '<input type="text" name="locked" value="" required disabled>',
+      (string)$htmlForm->inputText("locked")
+    );
   }
 
   public function testInputWithReadonly(): void {
@@ -278,8 +291,10 @@ class HtmlFormTest extends TestCase {
       ->setValue("readonly")
       ->setReadOnly(true);
     $htmlForm = $this->createHtmlForm($form);
-    $result = $htmlForm->inputText("readonly");
-    $this->assertTrue($result->getAttr("readonly"));
+    $this->assertSame(
+      '<input type="text" name="readonly" value="readonly" required readonly>',
+      (string)$htmlForm->inputText("readonly")
+    );
   }
 
   public function testInputOptional(): void {
@@ -288,8 +303,10 @@ class HtmlFormTest extends TestCase {
       ->setValue("optional")
       ->setRequired(false);
     $htmlForm = $this->createHtmlForm($form);
-    $result = $htmlForm->inputText("optional");
-    $this->assertNull($result->getAttr("required"));
+    $this->assertSame(
+      '<input type="text" name="optional" value="optional">',
+      (string)$htmlForm->inputText("optional")
+    );
   }
 
   // Radio buttons
@@ -300,14 +317,14 @@ class HtmlFormTest extends TestCase {
       ->setOptions($options)
       ->setValue("m");
     $htmlForm = $this->createHtmlForm($form);
-    $radios = $htmlForm->inputRadios("size");
-
-    $this->assertCount(3, $radios);
-    $this->assertEquals("s", $radios["s"]->getAttr("value"));
-    $this->assertEquals("m", $radios["m"]->getAttr("value"));
-    $this->assertEquals("l", $radios["l"]->getAttr("value"));
-    $this->assertTrue($radios["m"]->getAttr("checked"));
-    $this->assertNull($radios["s"]->getAttr("checked"));
+    $this->assertSame(
+      [
+        "s" => '<input type="radio" name="size" value="s" required title="Small">',
+        "m" => '<input type="radio" name="size" value="m" required checked title="Medium">',
+        "l" => '<input type="radio" name="size" value="l" required title="Large">',
+      ],
+      array_map("strval", $htmlForm->inputRadios("size"))
+    );
   }
 
   // Multi-select
@@ -317,10 +334,14 @@ class HtmlFormTest extends TestCase {
       ->setOptions(["r" => "Red", "g" => "Green", "b" => "Blue"])
       ->setValue(["r", "b"]);
     $htmlForm = $this->createHtmlForm($form);
-    $select = $htmlForm->select("colors");
-
-    $this->assertEquals("colors[]", $select->getAttr("name"));
-    $this->assertTrue($select->getAttr("multiple"));
+    $this->assertSame(
+      '<select name="colors[]" required multiple>'
+        . '<option value="r" selected>Red</option>'
+        . '<option value="g">Green</option>'
+        . '<option value="b" selected>Blue</option>'
+        . '</select>',
+      (string)$htmlForm->select("colors")
+    );
   }
 
   // Error display
@@ -331,11 +352,10 @@ class HtmlFormTest extends TestCase {
     $form->email->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $error = $htmlForm->error("email");
-
-    $this->assertInstanceOf(Html::class, $error);
-    $children = $error->getChildren();
-    $this->assertNotEmpty($children);
+    $this->assertSame(
+      "<div>Invalid email address</div>",
+      (string)$htmlForm->error("email")
+    );
   }
 
   public function testErrorWithMultiplePaths(): void {
@@ -350,11 +370,10 @@ class HtmlFormTest extends TestCase {
     $form->name->validate();
 
     $htmlForm = $this->createHtmlForm($form);
-    $error = $htmlForm->error("email", "name");
-
-    $this->assertInstanceOf(Html::class, $error);
-    $children = $error->getChildren();
-    $this->assertGreaterThanOrEqual(2, count($children));
+    $this->assertSame(
+      "<div>Invalid email address</div><div>This field is required</div>",
+      (string)$htmlForm->error("email", "name")
+    );
   }
 
   // Nested form paths
@@ -376,10 +395,10 @@ class HtmlFormTest extends TestCase {
     $form->user->email = (new FormItem\EmailInput())->setValue("test@example.com");
 
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputEmail("user/email");
-
-    $this->assertEquals("user[email]", $input->getAttr("name"));
-    $this->assertEquals("test@example.com", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="email" name="user[email]" value="test@example.com" required>',
+      (string)$htmlForm->inputEmail("user/email")
+    );
   }
 
   // makeName tests
@@ -420,41 +439,40 @@ class HtmlFormTest extends TestCase {
     $form = new Form();
     $form->website = (new FormItem\UrlInput())->setValue("https://example.com");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputUrl("website");
-
-    $this->assertEquals("url", $input->getAttr("type"));
-    $this->assertEquals("https://example.com", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="url" name="website" value="https://example.com" required>',
+      (string)$htmlForm->inputUrl("website")
+    );
   }
 
   public function testInputBoolean(): void {
     $form = new Form();
     $form->agree = (new FormItem\BooleanInput())->setValue("1");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputBoolean("agree");
-
-    $this->assertEquals("checkbox", $input->getAttr("type"));
-    $this->assertEquals("1", $input->getAttr("value"));
-    $this->assertTrue($input->getAttr("checked"));
+    $this->assertSame(
+      '<input type="checkbox" name="agree" value="1" required checked>',
+      (string)$htmlForm->inputBoolean("agree")
+    );
   }
 
   public function testInputBooleanUnchecked(): void {
     $form = new Form();
     $form->agree = (new FormItem\BooleanInput())->setValue("");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputBoolean("agree");
-
-    $this->assertEquals("checkbox", $input->getAttr("type"));
-    $this->assertNull($input->getAttr("checked"));
+    $this->assertSame(
+      '<input type="checkbox" name="agree" value="1" required>',
+      (string)$htmlForm->inputBoolean("agree")
+    );
   }
 
   public function testInputBooleanWithCustomValue(): void {
     $form = new Form();
     $form->agree = (new FormItem\BooleanInput())->setValue("yes");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputBoolean("agree", "yes");
-
-    $this->assertEquals("yes", $input->getAttr("value"));
-    $this->assertTrue($input->getAttr("checked"));
+    $this->assertSame(
+      '<input type="checkbox" name="agree" value="yes" required checked>',
+      (string)$htmlForm->inputBoolean("agree", "yes")
+    );
   }
 
   // Additional input type tests
@@ -462,60 +480,60 @@ class HtmlFormTest extends TestCase {
     $form = new Form();
     $form->phone = (new FormItem\TextInput())->setValue("+1-555-1234");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputTel("phone");
-
-    $this->assertEquals("tel", $input->getAttr("type"));
-    $this->assertEquals("+1-555-1234", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="tel" name="phone" value="+1-555-1234" required>',
+      (string)$htmlForm->inputTel("phone")
+    );
   }
 
   public function testInputDate(): void {
     $form = new Form();
     $form->birthday = (new FormItem\DateInput())->setValue("2024-01-15");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputDate("birthday");
-
-    $this->assertEquals("date", $input->getAttr("type"));
-    $this->assertEquals("2024-01-15", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="date" name="birthday" value="2024-01-15" required>',
+      (string)$htmlForm->inputDate("birthday")
+    );
   }
 
   public function testInputHidden(): void {
     $form = new Form();
     $form->token = (new FormItem\TextInput())->setValue("secret123");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputHidden("token");
-
-    $this->assertEquals("hidden", $input->getAttr("type"));
-    $this->assertEquals("secret123", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="hidden" name="token" value="secret123" required>',
+      (string)$htmlForm->inputHidden("token")
+    );
   }
 
   public function testInputPassword(): void {
     $form = new Form();
     $form->pass = (new FormItem\TextInput())->setValue("mypassword");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputPassword("pass");
-
-    $this->assertEquals("password", $input->getAttr("type"));
-    $this->assertEquals("mypassword", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="password" name="pass" value="mypassword" required>',
+      (string)$htmlForm->inputPassword("pass")
+    );
   }
 
   public function testInputFile(): void {
     $form = new Form();
     $form->upload = (new FormItem\TextInput())->setValue("");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputFile("upload");
-
-    $this->assertEquals("file", $input->getAttr("type"));
-    $this->assertEquals("upload", $input->getAttr("name"));
+    $this->assertSame(
+      '<input type="file" name="upload" value="" required>',
+      (string)$htmlForm->inputFile("upload")
+    );
   }
 
   public function testInputEmail(): void {
     $form = new Form();
     $form->email = (new FormItem\EmailInput())->setValue("test@example.com");
     $htmlForm = $this->createHtmlForm($form);
-    $input = $htmlForm->inputEmail("email");
-
-    $this->assertEquals("email", $input->getAttr("type"));
-    $this->assertEquals("test@example.com", $input->getAttr("value"));
+    $this->assertSame(
+      '<input type="email" name="email" value="test@example.com" required>',
+      (string)$htmlForm->inputEmail("email")
+    );
   }
 
   // Test getForm method
@@ -596,10 +614,7 @@ class HtmlFormTest extends TestCase {
     $form = new Form();
     $form->name = (new FormItem\TextInput())->setValue("John");
     $htmlForm = $this->createHtmlForm($form);
-    $error = $htmlForm->error("name");
-
-    $this->assertInstanceOf(Html::class, $error);
-    $this->assertEmpty($error->getChildren());
+    $this->assertSame("", (string)$htmlForm->error("name"));
   }
 
   // Test nested path with array notation
@@ -623,11 +638,10 @@ class HtmlFormTest extends TestCase {
       ->setOptions(["r" => "Red", "g" => "Green"])
       ->setValue("r");
     $htmlForm = $this->createHtmlForm($form);
-    $checkbox = $htmlForm->inputCheckbox("color", "r");
-
-    $this->assertEquals("checkbox", $checkbox->getAttr("type"));
-    $this->assertEquals("r", $checkbox->getAttr("value"));
-    $this->assertTrue($checkbox->getAttr("checked"));
+    $this->assertSame(
+      '<input type="checkbox" name="color" value="r" checked>',
+      (string)$htmlForm->inputCheckbox("color", "r")
+    );
   }
 
   // Test inputRadio individual method
@@ -637,11 +651,10 @@ class HtmlFormTest extends TestCase {
       ->setOptions(["s" => "Small", "m" => "Medium"])
       ->setValue("m");
     $htmlForm = $this->createHtmlForm($form);
-    $radio = $htmlForm->inputRadio("size", "m");
-
-    $this->assertEquals("radio", $radio->getAttr("type"));
-    $this->assertEquals("m", $radio->getAttr("value"));
-    $this->assertTrue($radio->getAttr("checked"));
+    $this->assertSame(
+      '<input type="radio" name="size" value="m" required checked>',
+      (string)$htmlForm->inputRadio("size", "m")
+    );
   }
 
   // Test getItemIn error conditions
