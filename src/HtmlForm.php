@@ -436,12 +436,14 @@ class HtmlForm {
     }
 
     if ($item instanceof HasNumericRangeInterface) {
+      // An unbounded item reports null or the integer limit, depending on its
+      // type. Neither is a bound worth putting in the markup.
       $max = $item->getMax();
-      if ($max !== INF) {
+      if ($max !== null && $max != PHP_INT_MAX) {
         $attrs["max"] = $max;
       }
       $min = $item->getMin();
-      if ($min !== -INF) {
+      if ($min !== null && $min != PHP_INT_MIN) {
         $attrs["min"] = $min;
       }
     }

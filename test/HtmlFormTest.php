@@ -226,6 +226,23 @@ class HtmlFormTest extends TestCase {
     $this->assertEquals($h, $htmlForm->inputText("username"));
   }
 
+  public function testAnUnboundedNumericItemHasNoMinOrMax(): void {
+    $form = new Form();
+    $form->age = new FormItem\IntegerInput();
+    $form->price = new FormItem\NumberInput();
+    $htmlForm = $this->createHtmlForm($form);
+
+    // an unbounded item reports the integer limit or null, neither of which is a bound
+    $this->assertSame(
+      '<input type="number" name="age" value="" required>',
+      (string)$htmlForm->inputNumber("age")
+    );
+    $this->assertSame(
+      '<input type="number" name="price" value="" required>',
+      (string)$htmlForm->inputNumber("price")
+    );
+  }
+
   public function testInputNumberWithRange(): void {
     $form = new Form();
     $form->age = (new FormItem\IntegerInput())
