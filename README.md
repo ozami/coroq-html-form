@@ -18,6 +18,7 @@ use Coroq\Form\FormItem;
 use Coroq\HtmlForm\HtmlForm;
 use Coroq\Form\ErrorMessageFormatter;
 use Coroq\Form\Error;
+use function Coroq\Html\h;
 
 // Create form
 $form = new Form();
@@ -39,13 +40,13 @@ $formatter->setMessages([
 $htmlForm = new HtmlForm($form, $formatter);
 
 // Generate inputs
-echo $htmlForm->inputText('username');
+echo h($htmlForm->inputText('username'));
 // <input type="text" name="username" value="" required maxlength="20" minlength="3">
 
-echo $htmlForm->inputEmail('email');
+echo h($htmlForm->inputEmail('email'));
 // <input type="email" name="email" value="" required>
 
-echo $htmlForm->inputNumber('age');
+echo h($htmlForm->inputNumber('age'));
 // <input type="number" name="age" value="" required max="100" min="18">
 ```
 
@@ -68,7 +69,7 @@ $htmlForm->textarea('bio');
 
 // Boolean checkbox
 $form->agree = new FormItem\BooleanInput();
-echo $htmlForm->inputBoolean('agree');
+echo h($htmlForm->inputBoolean('agree'));
 // <input type="checkbox" name="agree" value="1" required>
 ```
 
@@ -83,7 +84,7 @@ $form->country = (new FormItem\Select())
     ])
     ->setValue('jp');
 
-echo $htmlForm->select('country');
+echo h($htmlForm->select('country'));
 // <select name="country" required>
 //   <option value="us">United States</option>
 //   <option value="jp" selected>Japan</option>
@@ -95,7 +96,7 @@ $form->colors = (new FormItem\MultiSelect())
     ->setOptions(['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
     ->setValue(['r', 'b']);
 
-echo $htmlForm->select('colors');
+echo h($htmlForm->select('colors'));
 // <select name="colors[]" required multiple>...</select>
 ```
 
@@ -107,17 +108,17 @@ $form->size = (new FormItem\Select())
     ->setValue('m');
 
 // Individual checkbox
-echo $htmlForm->inputCheckbox('size', 's');
+echo h($htmlForm->inputCheckbox('size', 's'));
 // <input type="checkbox" name="size" value="s">
 
 // All checkboxes
 foreach ($htmlForm->inputCheckboxes('size') as $value => $checkbox) {
-    echo $checkbox; // Has title attribute with label
+    echo h($checkbox); // Has title attribute with label
 }
 
 // Radio buttons
 foreach ($htmlForm->inputRadios('size') as $value => $radio) {
-    echo $radio;
+    echo h($radio);
 }
 ```
 
@@ -128,15 +129,26 @@ $form->address = new Form();
 $form->address->city = new FormItem\TextInput();
 $form->address->postal = new FormItem\TextInput();
 
-echo $htmlForm->inputText('address/city');
+echo h($htmlForm->inputText('address/city'));
 // <input type="text" name="address[city]" value="" required>
 
-echo $htmlForm->inputText('address/postal');
+echo h($htmlForm->inputText('address/postal'));
 // <input type="text" name="address[postal]" value="" required>
 ```
 
 An item name cannot contain the delimiter, `[` or `]`. Use
 `setItemPathDelimiter()` to change the delimiter from `/`.
+
+## Escaping
+
+Every generated element goes through `h()` on the way out, the same as any
+other value. `h()` returns an `Html` unchanged, so wrapping one costs nothing
+and the rule stays worth applying without thinking about it:
+
+```php
+<?= h($htmlForm->inputText('username')) ?>
+<?= h($form->username->getValue()) ?>
+```
 
 ## Displaying Values
 
@@ -191,11 +203,11 @@ $form->email = (new FormItem\EmailInput())->setValue('invalid-email');
 $form->email->validate();
 
 // Display errors
-echo $htmlForm->error('email');
+echo h($htmlForm->error('email'));
 // <div>Invalid email address</div>
 
 // One block for several fields
-echo $htmlForm->error('email', 'username');
+echo h($htmlForm->error('email', 'username'));
 
 // Check for errors
 if ($form->email->hasError()) {
@@ -218,10 +230,10 @@ $form->locked = (new FormItem\TextInput())
 $form->computed = (new FormItem\TextInput())
     ->setReadOnly(true);
 
-echo $htmlForm->inputText('optional');
+echo h($htmlForm->inputText('optional'));
 // <input type="text" name="optional" value="">
 
-echo $htmlForm->inputText('locked');
+echo h($htmlForm->inputText('locked'));
 // <input type="text" name="locked" value="" required disabled>
 ```
 
@@ -234,18 +246,18 @@ use Coroq\HtmlForm\Integration\Bootstrap4;
 
 $htmlForm = new Bootstrap4($form, $formatter);
 
-echo $htmlForm->inputText('username');
+echo h($htmlForm->inputText('username'));
 // <input type="text" name="username" value="" required maxlength="20" minlength="3" class="form-control">
 
-echo $htmlForm->select('country');
+echo h($htmlForm->select('country'));
 // <select name="country" required class="form-control">...</select>
 
 // With validation errors
 $form->email->validate(); // Fails
-echo $htmlForm->inputEmail('email');
+echo h($htmlForm->inputEmail('email'));
 // <input type="email" name="email" value="" required class="form-control is-invalid">
 
-echo $htmlForm->error('email');
+echo h($htmlForm->error('email'));
 // <div class="invalid-feedback"><div>Invalid email address</div></div>
 ```
 
@@ -256,7 +268,7 @@ use Coroq\HtmlForm\Integration\Bootstrap5;
 
 $htmlForm = new Bootstrap5($form, $formatter);
 
-echo $htmlForm->select('country');
+echo h($htmlForm->select('country'));
 // <select name="country" required class="form-select">...</select>
 // Note: Bootstrap 5 uses form-select instead of form-control
 ```
@@ -298,32 +310,32 @@ $htmlForm = new HtmlForm($form, $formatter);
 <form method="post">
     <div>
         <label>Username</label>
-        <?= $htmlForm->inputText('username') ?>
-        <?= $htmlForm->error('username') ?>
+        <?= h($htmlForm->inputText('username')) ?>
+        <?= h($htmlForm->error('username')) ?>
     </div>
 
     <div>
         <label>Email</label>
-        <?= $htmlForm->inputEmail('email') ?>
-        <?= $htmlForm->error('email') ?>
+        <?= h($htmlForm->inputEmail('email')) ?>
+        <?= h($htmlForm->error('email')) ?>
     </div>
 
     <div>
         <label>Password</label>
-        <?= $htmlForm->inputPassword('password') ?>
-        <?= $htmlForm->error('password') ?>
+        <?= h($htmlForm->inputPassword('password')) ?>
+        <?= h($htmlForm->error('password')) ?>
     </div>
 
     <div>
         <label>Country</label>
-        <?= $htmlForm->select('country') ?>
-        <?= $htmlForm->error('country') ?>
+        <?= h($htmlForm->select('country')) ?>
+        <?= h($htmlForm->error('country')) ?>
     </div>
 
     <div>
-        <?= $htmlForm->inputBoolean('agree') ?>
+        <?= h($htmlForm->inputBoolean('agree')) ?>
         <label>I agree to terms</label>
-        <?= $htmlForm->error('agree') ?>
+        <?= h($htmlForm->error('agree')) ?>
     </div>
 
     <button type="submit">Submit</button>
