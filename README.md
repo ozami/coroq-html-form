@@ -8,7 +8,7 @@ Generates HTML form elements from `coroq/form` objects with validation attribute
 composer require coroq/html-form
 ```
 
-Requires PHP 8.0+, `coroq/form` 3.x, and `coroq/html` 1.x.
+Requires PHP 8.0+, `coroq/form` 3.x, and `coroq/html` 1.x or 2.x.
 
 ## Basic Usage
 
