@@ -72,71 +72,13 @@ class HtmlForm {
   }
 
   /**
-   * Get an item value that can be a string, or null if it cannot
-   * An item value is mixed, but everything displayed is text. A value with no
-   * string form, such as the array a multi-select holds, displays nothing.
+   * Get an item value that can be a value attribute, or null if it cannot
+   * An item value is mixed, but an attribute is text. A value with no string
+   * form, such as the array a multi-select holds, sets no attribute.
    */
   private function getStringValueIn(string $item_path): string|int|float|bool|\Stringable|null {
     $value = $this->getItemIn($item_path)->getValue();
     return is_scalar($value) || $value instanceof \Stringable ? $value : null;
-  }
-
-  /**
-   * Get form item value wrapped in Html object
-   * @param string $item_path
-   */
-  public function value(string $item_path): Html {
-    return (new Html())->append($this->getStringValueIn($item_path));
-  }
-
-  /**
-   * Format form item value using sprintf
-   * @param string $item_path
-   */
-  public function format(string $item_path, string $format): Html {
-    $value = $this->getStringValueIn($item_path);
-    if ($value == "") {
-      return new Html();
-    }
-    return (new Html())->append(sprintf($format, $value));
-  }
-
-  /**
-   * Format numeric value with number_format
-   * @param string $item_path
-   */
-  public function number(string $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
-    $value = $this->getStringValueIn($item_path);
-    if ($value == "") {
-      return new Html();
-    }
-    return (new Html())->append(number_format((float)"$value", $decimals, $dec_point, $thousands_sep));
-  }
-
-  /**
-   * Format date value with date formatting
-   * @param string $item_path
-   */
-  public function date(string $item_path, string $format): Html {
-    $value = $this->getStringValueIn($item_path);
-    if ($value == "") {
-      return new Html();
-    }
-    $time = strtotime("$value");
-    if ($time === false) {
-      throw new LogicException("Invalid date time string '$value'");
-    }
-    return (new Html())->append(date($format, $time));
-  }
-
-  /**
-   * Get selected label(s) from select/multi-select item
-   * A multi-select puts one label in each child, so getChildren() reaches them
-   * separately and nothing separates them until the caller says so
-   * @param string $item_path
-   */
-  public function selected(string $item_path): Html {
-    return (new Html())->append($this->getItemIn($item_path)->getSelectedLabel());
   }
 
   /**
