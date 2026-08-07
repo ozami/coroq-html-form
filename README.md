@@ -140,25 +140,48 @@ An item name cannot contain the delimiter, `[` or `]`. Use
 
 ## Displaying Values
 
+`HtmlForm` generates elements. A value you want to display comes from the form
+item itself, and `h()` escapes it:
+
 ```php
 $form->price = (new FormItem\NumberInput())->setValue('1234.56');
 $form->created = (new FormItem\DateInput())->setValue('2024-01-15');
+$form->country = (new FormItem\Select())
+  ->setOptions(['jp' => 'Japan', 'us' => 'United States'])
+  ->setValue('jp');
+$form->colors = (new FormItem\MultiSelect())
+  ->setOptions(['r' => 'Red', 'b' => 'Blue'])
+  ->setValue(['r', 'b']);
 
-// Plain value
-echo $htmlForm->value('price');
+// The submitted value
+echo h($form->price->getValue());
 // 1234.56
 
-// Formatted number
-echo $htmlForm->number('price', 2, '.', ',');
-// 1,234.56
+// Label of the chosen option, for a confirmation page
+echo h($form->country->getSelectedLabel());
+// Japan
 
-// Formatted date
-echo $htmlForm->date('created', 'F d, Y');
+// A multi-select returns one label per selected option
+echo h(implode(', ', $form->colors->getSelectedLabel()));
+// Red, Blue
+```
+
+`getParsedValue()` gives the value in its own type - `?float` on a
+`NumberInput`, `?int` on an `IntegerInput`, `?DateTimeImmutable` on a
+`DateInput` - so formatting needs no reparsing:
+
+```php
+echo h($form->created->getParsedValue()?->format('F d, Y'));
 // January 15, 2024
+```
 
-// Custom format
-echo $htmlForm->format('price', 'Price: $%s');
-// Price: $1234.56
+It returns `null` for an empty item, and `h(null)` renders nothing. Guard the
+call where the formatting would turn that null into something else:
+
+```php
+$price = $form->price->getParsedValue();
+echo h($price === null ? '' : number_format($price, 2, '.', ','));
+// 1,234.56, and nothing at all when price is empty
 ```
 
 ## Error Handling

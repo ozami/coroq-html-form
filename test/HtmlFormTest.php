@@ -25,13 +25,6 @@ class HtmlFormTest extends TestCase {
     return new HtmlForm($form, $formatter);
   }
 
-  public function testValue(): void {
-    $form = new Form();
-    $form->a = (new FormItem\TextInput())->setValue("A");
-    $htmlForm = $this->createHtmlForm($form);
-    $this->assertSame("A", (string)$htmlForm->value("a"));
-  }
-
   public function testInputUsesAValueThatCanBeAString(): void {
     $money = new class {
       public function __toString(): string {
@@ -183,37 +176,6 @@ class HtmlFormTest extends TestCase {
         return $h;
       }, ["a", "b", "c"]));
     $this->assertEquals($h, $htmlForm->select("x"));
-  }
-
-  // Value display methods
-  public function testFormat(): void {
-    $form = new Form();
-    $form->price = (new FormItem\NumberInput())->setValue("99.99");
-    $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      (new Html())->append("Price: $99.99"),
-      $htmlForm->format("price", "Price: $%s")
-    );
-  }
-
-  public function testNumber(): void {
-    $form = new Form();
-    $form->amount = (new FormItem\NumberInput())->setValue("1234.5678");
-    $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      (new Html())->append("1,234.57"),
-      $htmlForm->number("amount", 2, ".", ",")
-    );
-  }
-
-  public function testDate(): void {
-    $form = new Form();
-    $form->created = (new FormItem\DateInput())->setValue("2024-01-15");
-    $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      (new Html())->append("January 15, 2024"),
-      $htmlForm->date("created", "F d, Y")
-    );
   }
 
   // Validation attributes tests
@@ -377,18 +339,6 @@ class HtmlFormTest extends TestCase {
   }
 
   // Nested form paths
-  public function testNestedFormPath(): void {
-    $form = new Form();
-    $form->address = new Form();
-    $form->address->city = (new FormItem\TextInput())->setValue("Tokyo");
-
-    $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      (new Html())->append("Tokyo"),
-      $htmlForm->value("address/city")
-    );
-  }
-
   public function testNestedFormInputName(): void {
     $form = new Form();
     $form->user = new Form();
@@ -421,9 +371,10 @@ class HtmlFormTest extends TestCase {
 
     $this->assertEquals(".", $htmlForm->getItemPathDelimiter());
     $this->assertEquals("user[email]", $htmlForm->makeName("user.email"));
-    $this->assertEquals(
-      (new Html())->append("test@example.com"),
-      $htmlForm->value("user.email")
+    // the delimiter reaches item lookup, not just makeName()
+    $this->assertSame(
+      '<input type="email" name="user[email]" value="test@example.com" required>',
+      (string)$htmlForm->inputEmail("user.email")
     );
   }
 
@@ -544,71 +495,6 @@ class HtmlFormTest extends TestCase {
     $this->assertSame($form, $htmlForm->getForm());
   }
 
-  // Test selected() with array values
-  public function testSelectedWithMultipleValues(): void {
-    $form = new Form();
-    $form->colors = (new FormItem\MultiSelect())
-      ->setOptions(["r" => "Red", "g" => "Green", "b" => "Blue"])
-      ->setValue(["r", "b"]);
-    $htmlForm = $this->createHtmlForm($form);
-    $selected = $htmlForm->selected("colors");
-
-    $this->assertIsArray($selected);
-    $this->assertCount(2, $selected);
-    $this->assertEquals((new Html())->append("Red"), $selected[0]);
-    $this->assertEquals((new Html())->append("Blue"), $selected[1]);
-  }
-
-  public function testSelectedWithSingleValue(): void {
-    $form = new Form();
-    $form->size = (new FormItem\Select())
-      ->setOptions(["s" => "Small", "m" => "Medium", "l" => "Large"])
-      ->setValue("m");
-    $htmlForm = $this->createHtmlForm($form);
-    $selected = $htmlForm->selected("size");
-
-    $this->assertInstanceOf(Html::class, $selected);
-    $this->assertEquals((new Html())->append("Medium"), $selected);
-  }
-
-  // Test format with empty value
-  public function testFormatWithEmptyValue(): void {
-    $form = new Form();
-    $form->price = (new FormItem\NumberInput())->setValue("");
-    $htmlForm = $this->createHtmlForm($form);
-
-    $this->assertEquals(new Html(), $htmlForm->format("price", "Price: $%s"));
-  }
-
-  // Test number with empty value
-  public function testNumberWithEmptyValue(): void {
-    $form = new Form();
-    $form->amount = (new FormItem\NumberInput())->setValue("");
-    $htmlForm = $this->createHtmlForm($form);
-
-    $this->assertEquals(new Html(), $htmlForm->number("amount", 2));
-  }
-
-  // Test date with empty value
-  public function testDateWithEmptyValue(): void {
-    $form = new Form();
-    $form->created = (new FormItem\DateInput())->setValue("");
-    $htmlForm = $this->createHtmlForm($form);
-
-    $this->assertEquals(new Html(), $htmlForm->date("created", "Y-m-d"));
-  }
-
-  // Test date with invalid value
-  public function testDateWithInvalidValue(): void {
-    $form = new Form();
-    $form->created = (new FormItem\DateInput())->setValue("invalid-date");
-    $htmlForm = $this->createHtmlForm($form);
-
-    $this->expectException(\LogicException::class);
-    $this->expectExceptionMessage("Invaild date time string");
-    $htmlForm->date("created", "Y-m-d");
-  }
-
   // Test error with no errors
   public function testErrorWithNoErrors(): void {
     $form = new Form();
@@ -617,7 +503,6 @@ class HtmlFormTest extends TestCase {
     $this->assertSame("", (string)$htmlForm->error("name"));
   }
 
-  // Test nested path with array notation
   public function testDeeplyNestedPath(): void {
     $form = new Form();
     $form->user = new Form();
@@ -625,9 +510,9 @@ class HtmlFormTest extends TestCase {
     $form->user->profile->name = (new FormItem\TextInput())->setValue("Alice");
 
     $htmlForm = $this->createHtmlForm($form);
-    $this->assertEquals(
-      (new Html())->append("Alice"),
-      $htmlForm->value("user/profile/name")
+    $this->assertSame(
+      '<input type="text" name="user[profile][name]" value="Alice" required>',
+      (string)$htmlForm->inputText("user/profile/name")
     );
   }
 
@@ -665,7 +550,7 @@ class HtmlFormTest extends TestCase {
 
     $this->expectException(\LogicException::class);
     $this->expectExceptionMessage("Item 'nonexistent' not found in form");
-    $htmlForm->value("nonexistent");
+    $htmlForm->inputText("nonexistent");
   }
 
   public function testGetItemInCannotTraverseNonFormInterface(): void {
@@ -677,6 +562,6 @@ class HtmlFormTest extends TestCase {
     // Try to traverse into a TextInput (which is not a FormInterface, so we can't traverse deeper)
     $this->expectException(\LogicException::class);
     $this->expectExceptionMessage("Item 'name/invalid' not found in form");
-    $htmlForm->value("name/invalid");
+    $htmlForm->inputText("name/invalid");
   }
 }

@@ -72,69 +72,6 @@ class HtmlForm {
   }
 
   /**
-   * Get form item value wrapped in Html object
-   * @param string $item_path
-   */
-  public function value(string $item_path): Html {
-    return (new Html())->append($this->getItemIn($item_path)->getValue());
-  }
-
-  /**
-   * Format form item value using sprintf
-   * @param string $item_path
-   */
-  public function format(string $item_path, string $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
-    if ($value == "") {
-      return new Html();
-    }
-    return (new Html())->append(sprintf($format, $value));
-  }
-
-  /**
-   * Format numeric value with number_format
-   * @param string $item_path
-   */
-  public function number(string $item_path, int $decimals = 0, string $dec_point = ".", string $thousands_sep = ","): Html {
-    $value = $this->getItemIn($item_path)->getValue();
-    if ($value == "") {
-      return new Html();
-    }
-    return (new Html())->append(number_format((float)$value, $decimals, $dec_point, $thousands_sep));
-  }
-
-  /**
-   * Format date value with date formatting
-   * @param string $item_path
-   */
-  public function date(string $item_path, string $format): Html {
-    $value = $this->getItemIn($item_path)->getValue();
-    if ($value == "") {
-      return new Html();
-    }
-    $time = strtotime($value);
-    if ($time === false) {
-      throw new LogicException("Invaild date time string '$value'");
-    }
-    return (new Html())->append(date($format, $time));
-  }
-
-  /**
-   * Get selected label(s) from select/multi-select item
-   * @param string $item_path
-   * @return Html|array<Html>
-   */
-  public function selected(string $item_path): Html|array {
-    $item = $this->getItemIn($item_path);
-    if (is_array($item->getValue())) {
-      return array_map(function($label) {
-        return (new Html())->append($label);
-      }, $item->getSelectedLabel());
-    }
-    return (new Html())->append($item->getSelectedLabel());
-  }
-
-  /**
    * Generate input element with specified type
    *
    * A value attribute is a string, but an item value is mixed. A value with no
