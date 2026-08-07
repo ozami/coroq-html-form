@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12f1aa6c6ceafbc89059e9a1e45d1469",
+    "content-hash": "1f86b1f19f0ba3d4d2315f64e97875b9",
     "packages": [
         {
             "name": "coroq/form",
