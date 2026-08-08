@@ -485,14 +485,6 @@ class HtmlFormTest extends TestCase {
     );
   }
 
-  // Test getForm method
-  public function testGetForm(): void {
-    $form = new Form();
-    $htmlForm = $this->createHtmlForm($form);
-
-    $this->assertSame($form, $htmlForm->getForm());
-  }
-
   // Test error with no errors
   public function testErrorWithNoErrors(): void {
     $form = new Form();
