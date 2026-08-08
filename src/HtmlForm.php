@@ -25,13 +25,6 @@ class HtmlForm {
   }
 
   /**
-   * Get the underlying form object
-   */
-  public function getForm(): FormInterface {
-    return $this->form;
-  }
-
-  /**
    * Get the item path delimiter
    */
   public function getItemPathDelimiter(): string {
