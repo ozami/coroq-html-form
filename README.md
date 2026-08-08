@@ -23,19 +23,19 @@ use function Coroq\Html\h;
 // Create form
 $form = new Form();
 $form->username = (new FormItem\TextInput())
-    ->setMinLength(3)
-    ->setMaxLength(20);
+  ->setMinLength(3)
+  ->setMaxLength(20);
 $form->email = new FormItem\EmailInput();
 $form->age = (new FormItem\IntegerInput())
-    ->setMin(18)
-    ->setMax(100);
+  ->setMin(18)
+  ->setMax(100);
 
 // Create HTML form generator
 $formatter = new ErrorMessageFormatter();
 $formatter->setMessages([
-    Error\EmptyError::class => 'This field is required',
-    Error\InvalidEmailError::class => 'Invalid email address',
-    Error\Error::class => 'Invalid value', // a base class matches last
+  Error\EmptyError::class => 'This field is required',
+  Error\InvalidEmailError::class => 'Invalid email address',
+  Error\Error::class => 'Invalid value', // a base class matches last
 ]);
 $htmlForm = new HtmlForm($form, $formatter);
 
@@ -77,12 +77,12 @@ echo h($htmlForm->inputBoolean('agree'));
 
 ```php
 $form->country = (new FormItem\Select())
-    ->setOptions([
-        'us' => 'United States',
-        'jp' => 'Japan',
-        'uk' => 'United Kingdom'
-    ])
-    ->setValue('jp');
+  ->setOptions([
+    'us' => 'United States',
+    'jp' => 'Japan',
+    'uk' => 'United Kingdom'
+  ])
+  ->setValue('jp');
 
 echo h($htmlForm->select('country'));
 // <select name="country" required>
@@ -93,8 +93,8 @@ echo h($htmlForm->select('country'));
 
 // Multi-select
 $form->colors = (new FormItem\MultiSelect())
-    ->setOptions(['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-    ->setValue(['r', 'b']);
+  ->setOptions(['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
+  ->setValue(['r', 'b']);
 
 echo h($htmlForm->select('colors'));
 // <select name="colors[]" required multiple>...</select>
@@ -104,8 +104,8 @@ echo h($htmlForm->select('colors'));
 
 ```php
 $form->size = (new FormItem\Select())
-    ->setOptions(['s' => 'Small', 'm' => 'Medium', 'l' => 'Large'])
-    ->setValue('m');
+  ->setOptions(['s' => 'Small', 'm' => 'Medium', 'l' => 'Large'])
+  ->setValue('m');
 
 // Individual checkbox
 echo h($htmlForm->inputCheckbox('size', 's'));
@@ -113,12 +113,12 @@ echo h($htmlForm->inputCheckbox('size', 's'));
 
 // All checkboxes
 foreach ($htmlForm->inputCheckboxes('size') as $value => $checkbox) {
-    echo h($checkbox); // Has title attribute with label
+  echo h($checkbox); // Has title attribute with label
 }
 
 // Radio buttons
 foreach ($htmlForm->inputRadios('size') as $value => $radio) {
-    echo h($radio);
+  echo h($radio);
 }
 ```
 
@@ -211,7 +211,7 @@ echo h($htmlForm->error('email', 'username'));
 
 // Check for errors
 if ($form->email->hasError()) {
-    // ...
+  // ...
 }
 ```
 
@@ -220,15 +220,15 @@ if ($form->email->hasError()) {
 ```php
 // Optional field
 $form->optional = (new FormItem\TextInput())
-    ->setRequired(false);
+  ->setRequired(false);
 
 // Disabled field
 $form->locked = (new FormItem\TextInput())
-    ->setDisabled(true);
+  ->setDisabled(true);
 
 // Read-only field
 $form->computed = (new FormItem\TextInput())
-    ->setReadOnly(true);
+  ->setReadOnly(true);
 
 echo h($htmlForm->inputText('optional'));
 // <input type="text" name="optional" value="">
@@ -279,66 +279,66 @@ echo h($htmlForm->select('country'));
 // Setup form
 $form = new Form();
 $form->username = (new FormItem\TextInput())
-    ->setMinLength(3)
-    ->setMaxLength(20);
+  ->setMinLength(3)
+  ->setMaxLength(20);
 $form->email = new FormItem\EmailInput();
 $form->password = (new FormItem\TextInput())
-    ->setMinLength(8);
+  ->setMinLength(8);
 $form->country = (new FormItem\Select())
-    ->setOptions(['us' => 'USA', 'jp' => 'Japan', 'uk' => 'UK']);
+  ->setOptions(['us' => 'USA', 'jp' => 'Japan', 'uk' => 'UK']);
 $form->agree = new FormItem\BooleanInput();
 
 // Handle submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $form->setValue($_POST);
-    if ($form->validate()) {
-        // Process form
-        $data = $form->getValue();
-    }
+  $form->setValue($_POST);
+  if ($form->validate()) {
+    // Process form
+    $data = $form->getValue();
+  }
 }
 
 // Create HTML generator
 $formatter = new ErrorMessageFormatter();
 $formatter->setMessages([
-    Error\EmptyError::class => 'This field is required',
-    Error\InvalidEmailError::class => 'Invalid email address',
-    Error\Error::class => 'Invalid value', // a base class matches last
+  Error\EmptyError::class => 'This field is required',
+  Error\InvalidEmailError::class => 'Invalid email address',
+  Error\Error::class => 'Invalid value', // a base class matches last
 ]);
 $htmlForm = new HtmlForm($form, $formatter);
 ?>
 
 <form method="post">
-    <div>
-        <label>Username</label>
-        <?= h($htmlForm->inputText('username')) ?>
-        <?= h($htmlForm->error('username')) ?>
-    </div>
+  <div>
+    <label>Username</label>
+    <?= h($htmlForm->inputText('username')) ?>
+    <?= h($htmlForm->error('username')) ?>
+  </div>
 
-    <div>
-        <label>Email</label>
-        <?= h($htmlForm->inputEmail('email')) ?>
-        <?= h($htmlForm->error('email')) ?>
-    </div>
+  <div>
+    <label>Email</label>
+    <?= h($htmlForm->inputEmail('email')) ?>
+    <?= h($htmlForm->error('email')) ?>
+  </div>
 
-    <div>
-        <label>Password</label>
-        <?= h($htmlForm->inputPassword('password')) ?>
-        <?= h($htmlForm->error('password')) ?>
-    </div>
+  <div>
+    <label>Password</label>
+    <?= h($htmlForm->inputPassword('password')) ?>
+    <?= h($htmlForm->error('password')) ?>
+  </div>
 
-    <div>
-        <label>Country</label>
-        <?= h($htmlForm->select('country')) ?>
-        <?= h($htmlForm->error('country')) ?>
-    </div>
+  <div>
+    <label>Country</label>
+    <?= h($htmlForm->select('country')) ?>
+    <?= h($htmlForm->error('country')) ?>
+  </div>
 
-    <div>
-        <?= h($htmlForm->inputBoolean('agree')) ?>
-        <label>I agree to terms</label>
-        <?= h($htmlForm->error('agree')) ?>
-    </div>
+  <div>
+    <?= h($htmlForm->inputBoolean('agree')) ?>
+    <label>I agree to terms</label>
+    <?= h($htmlForm->error('agree')) ?>
+  </div>
 
-    <button type="submit">Submit</button>
+  <button type="submit">Submit</button>
 </form>
 ```
 
